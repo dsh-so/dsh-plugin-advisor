@@ -50,3 +50,13 @@ pnpm test        # node --test (match logic)
 ```
 
 The bundle targets `@deepseek-ai/dsh-tools@0.1.0-rc.6` (matches the current dsh release line); `@deepseek-ai/cordis` is a peer dependency provided by the host.
+
+> **Why `@deepseek-ai/dsh-tools` and `@deepseek-ai/schemastery` are peer dependencies**
+> (and listed in `devDependencies` only for local build/test): installing them as
+> regular `dependencies` makes pnpm hoist profile-local copies into the profile's
+> `node_modules`, which shadow the host's copies. The dsh tools runtime keys its
+> services by module-identity symbols, so a shadow copy breaks `ctx.tools`
+> scheduling and crashes the agent loop with `Cannot read properties of
+> undefined (reading 'prepare')`. Peers force the plugin to resolve the host's
+> single copy instead. (Fixed in 0.1.1; 0.1.0 on the npm registry still has the
+> bug — reinstall with `dsh plugin --profile web add dsh-plugin-finder@^0.1.1`.)
