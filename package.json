@@ -1,12 +1,12 @@
 {
   "name": "dsh-plugin-finder",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Find DeepSeek Harness plugins from the dsh.so registry — like find-skill, but for dsh plugins.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib", "cordis.patch.yml", "README.md"],
+  "files": ["lib", "cordis.patch.yml", "README.md", "README.zh.md"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepare": "tsc -p tsconfig.json",
