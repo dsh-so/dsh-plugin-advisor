@@ -1,0 +1,30 @@
+{
+  "name": "dsh-plugin-finder",
+  "version": "0.1.0",
+  "description": "Find DeepSeek Harness plugins from the dsh.so registry — like find-skill, but for dsh plugins.",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib", "cordis.patch.yml", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "tsc -p tsconfig.json",
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.0-rc.6",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
