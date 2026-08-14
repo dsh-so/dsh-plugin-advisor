@@ -2,7 +2,7 @@
   "name": "dsh-plugin-finder",
   "version": "0.1.1",
   "description": "Find DeepSeek Harness plugins from the dsh.so registry — like find-skill, but for dsh plugins.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

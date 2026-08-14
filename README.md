@@ -241,4 +241,4 @@ pnpm test        # node --test(match logic unit tests / 匹配逻辑单测)
 
 ## License
 
-MIT
+Apache-2.0 · Copyright (c) 2026 zhoushimin
