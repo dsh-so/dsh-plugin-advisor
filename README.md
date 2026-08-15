@@ -108,12 +108,30 @@ For daily use: **just ignore the warning**.
 
 ## 3. Usage
 
-`find_plugin` is an **agent tool** — no manual command; just tell the agent what you need and it calls the tool automatically:
+`find_plugin` is an **agent tool** — no manual command; just tell the agent what you need and it calls the tool automatically. A few example prompts (Chinese works too):
 
 - "Find me a plugin for OCR / screenshots"
 - "I need a terminal TUI plugin"
 - "What dsh plugins exist for memory / RAG?"
 - "Find me a plugin for price tracking"
+- "帮我找支持 OCR / 截图转文字的 dsh 插件"
+- "有没有能识别图片内容的插件?"
+
+### Example conversations
+
+**English — OCR / screenshots**
+
+- **You:** *Find me a plugin for OCR / screenshots*
+- **Agent:** *automatically calls `find_plugin` with `{"query": "vision OCR screenshots", "limit": 3}` and returns a ranked list — see [Output Format](#4-output-format)*
+- **You:** *How do I install the top one?*
+- **Agent:** *Run `dsh plugin --profile web add dsh-vision-router`, then restart `dsh web`.*
+
+**中文 — 终端 TUI**
+
+- **你:** *有没有终端 TUI 插件?*
+- **助手:** *自动调用 `find_plugin`,query 为 `"terminal TUI"`* → 返回 `dsh-tianshu-tui`、`dsh-whale-tui`、`dsh-tui` 等结果
+- **你:** *帮我装第一个*
+- **助手:** *执行 `dsh plugin --profile web add dsh-tianshu-tui`,然后重启 `dsh web`。*
 
 ### Tool parameters
 
@@ -126,25 +144,67 @@ For daily use: **just ignore the warning**.
 
 ## 4. Output Format
 
-Each result includes: rank, plugin name, stars, topics, description, install command, detail link. Real example (query `"vision OCR screenshots"`, limit=3):
+Each result includes: rank, plugin name, stars, topics, description, install command, detail link. Real examples below were captured from the live registry — ranks and star counts drift over time.
+
+**`find_plugin("vision OCR screenshots", limit=3)`**
 
 ```
-1. agent-vision-toolkit — 496★ [developer, vision, automation, network, ai, ui]
+1. dsh-vision-router — 46★ [developer, vision]
+   Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots)……
+   Install: dsh plugin --profile web add dsh-vision-router
+   https://www.dsh.so/plugins/dsh-vision-router/
+
+2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui]
    为纯文本模型"看图"设计更好的视觉工具箱和技能,支持多图理解,图片问答,
    前端UI还原、GUI 自动化等……
    Install: dsh plugin --profile web add agent-vision-toolkit
    https://www.dsh.so/plugins/agent-vision-toolkit/
 
-2. dsh-vision-toolkit — 140★ [vision, browser, automation, network, ui]
-   让纯文本模型更好地做视觉任务的DeepSeek Harness插件……
+3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui]
+   让纯文本模型更好地做视觉任务的DeepSeek Harness插件:带意图的图片问答、长截图 OCR、UI 还原等……
    Install: dsh plugin --profile web add dsh-vision-toolkit
    https://www.dsh.so/plugins/dsh-vision-toolkit/
-
-3. shadow-vision — 2★ [vision, network, data, ai]
-   Open-source MCP vision server……
-   Install: dsh plugin --profile web add shadow-vision
-   https://www.dsh.so/plugins/shadow-vision/
 ```
+
+**`find_plugin("terminal TUI", limit=3)`**
+
+```
+1. dsh-tianshu-tui — 132★ [terminal, ui]
+   dsh-tianshu-tui — DeepSeek Harness terminal UI
+   Install: dsh plugin --profile web add dsh-tianshu-tui
+   https://www.dsh.so/plugins/dsh-tianshu-tui/
+
+2. dsh-whale-tui — 0★ [developer, terminal, ui]
+   grok-build style terminal UI for DeepSeek Harness: a Rust/ratatui TUI shipped as a dsh plugin bundle
+   Install: dsh plugin --profile web add dsh-whale-tui
+   https://www.dsh.so/plugins/dsh-whale-tui/
+
+3. dsh-tui — 12★ [developer, terminal, ai, ui]
+   Claude Code-style terminal UI for DeepSeek Harness agents, as an out-of-tree dsh plugin bundle
+   Install: dsh plugin --profile web add dsh-tui-4
+   https://www.dsh.so/plugins/dsh-tui-4/
+```
+
+**`find_plugin("memory rag", limit=3)`**
+
+```
+1. dsh-memory — 2★ [terminal, knowledge, storage]
+   Cited memory over DSH's lossless session log — distilled, human-auditable facts with citations……; memory_read/memory_expand tools, recall index, and a dsh-memory CLI.
+   Install: dsh plugin --profile web add dsh-memory-2
+   https://www.dsh.so/plugins/dsh-memory-2/
+
+2. dsh-memory — 1★ [knowledge, storage]
+   Durable cross-session SQLite memory for DeepSeek Harness
+   Install: dsh plugin --profile web add dsh-memory
+   https://www.dsh.so/plugins/dsh-memory/
+
+3. mindspace-dsh-session-memory — 1★ [knowledge, storage]
+   Editable, session-isolated personalization memory for DeepSeek Harness
+   Install: dsh plugin --profile web add mindspace-dsh-session-memory
+   https://www.dsh.so/plugins/mindspace-dsh-session-memory/
+```
+
+> 💡 Query intent matters: `"price tracking"` matches **cost/balance-tracking** plugins (`dsh-balance`, `deepseek-harness-wallet`), not price-comparison scrapers — matching reflects what the registry actually describes.
 
 No-match response:
 

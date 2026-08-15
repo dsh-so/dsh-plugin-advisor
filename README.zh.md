@@ -108,12 +108,29 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 
 ## 3. 使用方法
 
-`find_plugin` 是**模型工具**,不需要手动输入命令——直接对助手说需求,它会自动调用:
+`find_plugin` 是**模型工具**,不需要手动输入命令——直接对助手说需求,它会自动调用。示例(中英文均可):
 
 - "帮我找支持 OCR / 截图转文字的 dsh 插件"
 - "有没有终端 TUI 插件?"
 - "我想做 RAG 记忆,有什么插件"
 - "Find me a plugin for price tracking"
+- "有没有能识别图片内容的插件?"
+
+### 完整对话示例
+
+**中文 — OCR / 截图**
+
+- **你:** *帮我找支持 OCR / 截图转文字的 dsh 插件*
+- **助手:** *自动调用 `find_plugin`,参数 `{"query": "vision OCR screenshots", "limit": 3}`,返回按相关度排序的结果——见[返回结果格式](#4-返回结果格式)*
+- **你:** *第一个怎么装?*
+- **助手:** *执行 `dsh plugin --profile web add dsh-vision-router`,然后重启 `dsh web`。*
+
+**English — terminal TUI**
+
+- **You:** *I need a terminal TUI plugin*
+- **Agent:** *calls `find_plugin` with query `"terminal TUI"`* → returns `dsh-tianshu-tui`, `dsh-whale-tui`, `dsh-tui`
+- **You:** *Install the first one*
+- **Agent:** *Run `dsh plugin --profile web add dsh-tianshu-tui`, then restart `dsh web`.*
 
 ### 工具参数
 
@@ -126,25 +143,67 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 
 ## 4. 返回结果格式
 
-每条结果包含:排名、插件名、star 数、标签、简介、安装命令、详情链接。真实示例(查询 `"vision OCR screenshots"`,limit=3):
+每条结果包含:排名、插件名、star 数、标签、简介、安装命令、详情链接。以下为**真实示例**(取自 dsh.so 实时索引,排名与 star 数会随时间变化)。
+
+**`find_plugin("vision OCR screenshots", limit=3)`**
 
 ```
-1. agent-vision-toolkit — 496★ [developer, vision, automation, network, ai, ui]
+1. dsh-vision-router — 46★ [developer, vision]
+   Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots)……
+   Install: dsh plugin --profile web add dsh-vision-router
+   https://www.dsh.so/plugins/dsh-vision-router/
+
+2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui]
    为纯文本模型"看图"设计更好的视觉工具箱和技能,支持多图理解,图片问答,
    前端UI还原、GUI 自动化等……
    Install: dsh plugin --profile web add agent-vision-toolkit
    https://www.dsh.so/plugins/agent-vision-toolkit/
 
-2. dsh-vision-toolkit — 140★ [vision, browser, automation, network, ui]
-   让纯文本模型更好地做视觉任务的DeepSeek Harness插件……
+3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui]
+   让纯文本模型更好地做视觉任务的DeepSeek Harness插件:带意图的图片问答、长截图 OCR、UI 还原等……
    Install: dsh plugin --profile web add dsh-vision-toolkit
    https://www.dsh.so/plugins/dsh-vision-toolkit/
-
-3. shadow-vision — 2★ [vision, network, data, ai]
-   Open-source MCP vision server……
-   Install: dsh plugin --profile web add shadow-vision
-   https://www.dsh.so/plugins/shadow-vision/
 ```
+
+**`find_plugin("terminal TUI", limit=3)`**
+
+```
+1. dsh-tianshu-tui — 132★ [terminal, ui]
+   dsh-tianshu-tui — DeepSeek Harness terminal UI
+   Install: dsh plugin --profile web add dsh-tianshu-tui
+   https://www.dsh.so/plugins/dsh-tianshu-tui/
+
+2. dsh-whale-tui — 0★ [developer, terminal, ui]
+   grok-build style terminal UI for DeepSeek Harness: a Rust/ratatui TUI shipped as a dsh plugin bundle
+   Install: dsh plugin --profile web add dsh-whale-tui
+   https://www.dsh.so/plugins/dsh-whale-tui/
+
+3. dsh-tui — 12★ [developer, terminal, ai, ui]
+   Claude Code-style terminal UI for DeepSeek Harness agents, as an out-of-tree dsh plugin bundle
+   Install: dsh plugin --profile web add dsh-tui-4
+   https://www.dsh.so/plugins/dsh-tui-4/
+```
+
+**`find_plugin("memory rag", limit=3)`**
+
+```
+1. dsh-memory — 2★ [terminal, knowledge, storage]
+   Cited memory over DSH's lossless session log — distilled, human-auditable facts with citations……; memory_read/memory_expand tools, recall index, and a dsh-memory CLI.
+   Install: dsh plugin --profile web add dsh-memory-2
+   https://www.dsh.so/plugins/dsh-memory-2/
+
+2. dsh-memory — 1★ [knowledge, storage]
+   Durable cross-session SQLite memory for DeepSeek Harness
+   Install: dsh plugin --profile web add dsh-memory
+   https://www.dsh.so/plugins/dsh-memory/
+
+3. mindspace-dsh-session-memory — 1★ [knowledge, storage]
+   Editable, session-isolated personalization memory for DeepSeek Harness
+   Install: dsh plugin --profile web add mindspace-dsh-session-memory
+   https://www.dsh.so/plugins/mindspace-dsh-session-memory/
+```
+
+> 💡 查询意图很重要:`"price tracking"` 匹配到的是**费用/余额追踪**类插件(`dsh-balance`、`deepseek-harness-wallet`),而不是比价爬虫——匹配结果反映的是索引里实际存在的描述。
 
 无匹配时返回提示:
 
