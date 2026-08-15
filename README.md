@@ -1,6 +1,6 @@
 # dsh-plugin-finder
 
-Find DeepSeek Harness plugins from the [dsh.so](https://dsh.so) registry — like *find-skill*, but for dsh plugins.
+Find DeepSeek Harness plugins from the [dsh.so](https://dsh.so) plugin marketplace — like *find-skill*, but for dsh plugins.
 
 This plugin registers one agent tool, **`find_plugin`**: describe a need in natural language, and it searches the dsh.so plugin index for the best-matching plugins, returning name, GitHub stars, topics, description, an **install command**, and a detail link.
 
@@ -11,7 +11,7 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
   <br>
   <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
   <br>
-  <em>the DeepSeek Harness plugin registry — discover, compare and install plugins · 发现、对比并安装 DSH 插件</em>
+  <em>the DeepSeek Harness plugin marketplace — discover, compare and install plugins · 发现、对比并安装 DSH 插件</em>
 </p>
 
 **中文版**: [README.zh.md](README.zh.md)
@@ -152,7 +152,7 @@ For daily use: **just ignore the warning**.
 
 ## 4. Output Format
 
-Each result includes: rank, plugin name, stars, topics, description, install command, detail link. Real examples below were captured from the live registry — ranks and star counts drift over time.
+Each result includes: rank, plugin name, stars, topics, description, install command, detail link. Real examples below were captured from the live marketplace — ranks and star counts drift over time.
 
 **`find_plugin("vision OCR screenshots", limit=3)`**
 
@@ -212,12 +212,12 @@ Each result includes: rank, plugin name, stars, topics, description, install com
    https://www.dsh.so/plugins/mindspace-dsh-session-memory/
 ```
 
-> 💡 Query intent matters: `"price tracking"` matches **cost/balance-tracking** plugins (`dsh-balance`, `deepseek-harness-wallet`), not price-comparison scrapers — matching reflects what the registry actually describes.
+> 💡 Query intent matters: `"price tracking"` matches **cost/balance-tracking** plugins (`dsh-balance`, `deepseek-harness-wallet`), not price-comparison scrapers — matching reflects what the marketplace actually describes.
 
 No-match response:
 
 ```
-No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
+No plugins in the dsh.so plugin marketplace matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
 Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.2 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
