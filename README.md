@@ -241,7 +241,7 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 ```yaml
 - insert:
     - id: dsh-plugin-finder
-      name: dsh-plugin-finder
+      name: '@dsh.so/dsh-plugin-finder'
       config:
         indexUrl: https://www.dsh.so/plugins-index.json   # override for self-host / testing
         maxResults: 5                                      # default result count

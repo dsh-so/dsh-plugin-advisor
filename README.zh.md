@@ -240,7 +240,7 @@ No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g
 ```yaml
 - insert:
     - id: dsh-plugin-finder
-      name: dsh-plugin-finder
+      name: '@dsh.so/dsh-plugin-finder'
       config:
         indexUrl: https://www.dsh.so/plugins-index.json   # 索引地址,自建/测试时覆盖
         maxResults: 5                                      # 默认返回条数
