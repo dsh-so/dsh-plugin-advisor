@@ -29,7 +29,7 @@
 > • 结果即答案:名称 / star / 标签 / 简介 / **安装命令** / 详情链接,一条龙
 > • 零配置,装完即用,索引 10 分钟缓存
 >
-> 安装:`dsh plugin --profile web add dsh-plugin-finder`
+> 安装:`dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'`
 > 装完重启 `dsh web`,对助手说需求即可。跟 find-skill 找技能一样,这次是找插件。🚀
 
 ---
@@ -46,7 +46,7 @@
 >
 > 它与 find-skill 找技能的思路一脉相承:不用记插件名、不用翻目录,把"检索"这件小事交给 Agent。内置关键词打分(名称 +3 / 标签 +2 / 简介 +1,同分按 star 数排序),中英文查询均支持;索引 10 分钟缓存、可配置超时,轻量无依赖(仅声明 peer 依赖,宿主统一管理)。
 >
-> 安装: `dsh plugin --profile web add dsh-plugin-finder`(web / tui / headless 等 profile 均适用),重启后即可使用。Apache-2.0 开源。
+> 安装: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'`(web / tui / headless 等 profile 均适用),重启后即可使用。Apache-2.0 开源。
 
 ---
 
@@ -80,7 +80,7 @@ Agent 会自动检索 dsh.so 的实时插件索引,按相关度排序返回结�
 **开始使用**
 
 ```sh
-dsh plugin --profile web add dsh-plugin-finder
+dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'
 ```
 
 重启 `dsh web` 后,对助手说出你的需求即可。插件市场在 dsh.so 等你探索——而你的 Agent,已经知道门牌号了。
@@ -97,7 +97,7 @@ dsh plugin --profile web add dsh-plugin-finder
 
 > `dsh-plugin-finder` gives DeepSeek Harness agents a built-in plugin search. Describe a need in plain language ("vision OCR screenshots", "terminal TUI", "memory rag") and the `find_plugin` tool scans the live dsh.so registry, returning ranked matches with name, GitHub stars, topics, description, a copy-paste **install command**, and a detail link. Like find-skill, but for dsh plugins.
 >
-> Install: `dsh plugin --profile web add dsh-plugin-finder` · restart `dsh web` · done.
+> Install: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'` · restart `dsh web` · done.
 
 **Longer (marketplace listing)**
 

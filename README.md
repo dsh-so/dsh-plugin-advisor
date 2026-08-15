@@ -35,14 +35,14 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
 Install from the dsh.so marketplace (recommended):
 
 ```sh
-dsh plugin --profile web add @dsh.so/dsh-plugin-finder
+dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'
 ```
 
 Other profiles work the same — just change the name:
 
 ```sh
-dsh plugin --profile tui add @dsh.so/dsh-plugin-finder
-dsh plugin --profile headless add @dsh.so/dsh-plugin-finder
+dsh plugin --profile tui add '@dsh.so/dsh-plugin-finder'
+dsh plugin --profile headless add '@dsh.so/dsh-plugin-finder'
 ```
 
 Install from a local checkout (development):
@@ -54,7 +54,7 @@ dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
 > ⚠️ **Version note**: if you have **0.1.0**, upgrade first — 0.1.0 installed `@deepseek-ai/dsh-tools` as a regular dependency, which conflicts with the host's copy and crashes the agent loop with `Cannot read properties of undefined (reading 'prepare')`. **Fixed in 0.1.1**; reinstall with:
 >
 > ```sh
-> dsh plugin --profile web add @dsh.so/dsh-plugin-finder@^0.1.1
+> dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@^0.1.1'
 > ```
 
 **Restart the web profile** for the new bundle to load:
@@ -177,7 +177,7 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
 **`find_plugin("terminal TUI", limit=3)`**
 
 ```
-1. dsh-tianshu-tui — 132★ [terminal, ui] · L2 · Structured · audited/low
+1. dsh-tianshu-tui — 132★ [terminal, ui] · ✔ 基础验证通过 · 🔒 安全通过:低风险
    dsh-tianshu-tui — DeepSeek Harness terminal UI
    Install: dsh plugin --profile web add dsh-tianshu-tui
    https://www.dsh.so/plugins/dsh-tianshu-tui/
@@ -187,7 +187,7 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
    Install: dsh plugin --profile web add dsh-whale-tui
    https://www.dsh.so/plugins/dsh-whale-tui/
 
-3. dsh-tui — 4★ [developer, terminal, ai, ui] · L1 · Found · audited/low
+3. dsh-tui — 4★ [developer, terminal, ai, ui] · ✔ 已收录(未功能测试) · 🔒 安全通过:低风险
    Claude Code-style terminal UI for DeepSeek Harness agents, as an out-of-tree dsh plugin bundle
    Install: dsh plugin --profile web add dsh-tui
    https://www.dsh.so/plugins/dsh-tui-4/
@@ -206,7 +206,7 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
    Install: dsh plugin --profile web add dsh-memory
    https://www.dsh.so/plugins/dsh-memory/
 
-3. mindspace-dsh-session-memory — 1★ [knowledge, storage] · L2 · Structured · audited/low
+3. mindspace-dsh-session-memory — 1★ [knowledge, storage] · ✔ 基础验证通过 · 🔒 安全通过:低风险
    Editable, session-isolated personalization memory for DeepSeek Harness
    Install: dsh plugin --profile web add mindspace-dsh-session-memory
    https://www.dsh.so/plugins/mindspace-dsh-session-memory/
@@ -279,10 +279,10 @@ A: No — they are a false positive; see [Section 2](#2-peer-dependency-warnings
 A: Use broader English terms such as `"image"`, `"terminal"`, `"memory"`, or drop overly specific qualifiers.
 
 **Q: How do I update the plugin?**
-A: `dsh plugin --profile web add @dsh.so/dsh-plugin-finder@latest`, then restart.
+A: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@latest'`, then restart.
 
 **Q: How do I uninstall?**
-A: `dsh plugin --profile web remove @dsh.so/dsh-plugin-finder`, then restart.
+A: `dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'`, then restart.
 
 ---
 

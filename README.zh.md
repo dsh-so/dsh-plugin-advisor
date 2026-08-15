@@ -35,14 +35,14 @@
 从 dsh.so 插件市场安装(推荐):
 
 ```sh
-dsh plugin --profile web add @dsh.so/dsh-plugin-finder
+dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'
 ```
 
 其他 profile 同理,替换名字即可:
 
 ```sh
-dsh plugin --profile tui add @dsh.so/dsh-plugin-finder
-dsh plugin --profile headless add @dsh.so/dsh-plugin-finder
+dsh plugin --profile tui add '@dsh.so/dsh-plugin-finder'
+dsh plugin --profile headless add '@dsh.so/dsh-plugin-finder'
 ```
 
 从本地源码目录安装(开发调试时):
@@ -54,7 +54,7 @@ dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
 > ⚠️ **版本提示**:若你装的是 **0.1.0**,请先升级——0.1.0 把 `@deepseek-ai/dsh-tools` 装成了普通依赖,会与宿主副本冲突导致 agent 循环崩溃(`Cannot read properties of undefined (reading 'prepare')`)。**0.1.1 已修复**,重新安装:
 >
 > ```sh
-> dsh plugin --profile web add @dsh.so/dsh-plugin-finder@^0.1.1
+> dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@^0.1.1'
 > ```
 
 安装完成后,**重启 web profile** 才能生效:
@@ -176,7 +176,7 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 **`find_plugin("terminal TUI", limit=3)`**
 
 ```
-1. dsh-tianshu-tui — 132★ [terminal, ui] · L2 · Structured · audited/low
+1. dsh-tianshu-tui — 132★ [terminal, ui] · ✔ 基础验证通过 · 🔒 安全通过:低风险
    dsh-tianshu-tui — DeepSeek Harness terminal UI
    Install: dsh plugin --profile web add dsh-tianshu-tui
    https://www.dsh.so/plugins/dsh-tianshu-tui/
@@ -186,7 +186,7 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
    Install: dsh plugin --profile web add dsh-whale-tui
    https://www.dsh.so/plugins/dsh-whale-tui/
 
-3. dsh-tui — 4★ [developer, terminal, ai, ui] · L1 · Found · audited/low
+3. dsh-tui — 4★ [developer, terminal, ai, ui] · ✔ 已收录(未功能测试) · 🔒 安全通过:低风险
    Claude Code-style terminal UI for DeepSeek Harness agents, as an out-of-tree dsh plugin bundle
    Install: dsh plugin --profile web add dsh-tui
    https://www.dsh.so/plugins/dsh-tui-4/
@@ -205,7 +205,7 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
    Install: dsh plugin --profile web add dsh-memory
    https://www.dsh.so/plugins/dsh-memory/
 
-3. mindspace-dsh-session-memory — 1★ [knowledge, storage] · L2 · Structured · audited/low
+3. mindspace-dsh-session-memory — 1★ [knowledge, storage] · ✔ 基础验证通过 · 🔒 安全通过:低风险
    Editable, session-isolated personalization memory for DeepSeek Harness
    Install: dsh plugin --profile web add mindspace-dsh-session-memory
    https://www.dsh.so/plugins/mindspace-dsh-session-memory/
@@ -278,10 +278,10 @@ A: 不用管,是误报,见[第 2 节](#2-安装时的-peer-依赖警告重要)�
 A: 换更宽的英文词,如 `"image"`、`"terminal"`、`"memory"`;或去掉过具体的限定词。
 
 **Q: 插件升级了,怎么更新?**
-A: `dsh plugin --profile web add @dsh.so/dsh-plugin-finder@latest`,然后重启。
+A: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@latest'`,然后重启。
 
 **Q: 怎么卸载?**
-A: `dsh plugin --profile web remove @dsh.so/dsh-plugin-finder`,然后重启。
+A: `dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'`,然后重启。
 
 ---
 
