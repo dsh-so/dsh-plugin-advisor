@@ -212,6 +212,8 @@ No-match response:
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
+Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.2 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
+
 ---
 
 ## 5. Search Tips
@@ -245,6 +247,7 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 | `maxResults` | `5` | Default result count when `limit` is not passed |
 | `cacheTtlMs` | `600000` (10 min) | How long to reuse the fetched index before refetching |
 | `timeoutMs` | `15000` | Fetch timeout in milliseconds |
+| `attribution` | `true` | Append a "Powered by dsh.so" promotion and copyright footer to every result |
 
 ---
 

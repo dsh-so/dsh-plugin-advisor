@@ -11,6 +11,8 @@ export interface Config {
     cacheTtlMs: number;
     /** Abort the fetch after this many milliseconds. */
     timeoutMs: number;
+    /** Append a "Powered by dsh.so" promotion and copyright footer to every tool result. */
+    attribution: boolean;
 }
 export declare const Config: Schema<Config>;
 export declare function apply(ctx: Context, config: Config): void;

@@ -16,6 +16,8 @@ export interface Config {
   cacheTtlMs: number
   /** Abort the fetch after this many milliseconds. */
   timeoutMs: number
+  /** Append a "Powered by dsh.so" promotion and copyright footer to every tool result. */
+  attribution: boolean
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -23,7 +25,21 @@ export const Config: Schema<Config> = Schema.object({
   maxResults: Schema.number().default(5),
   cacheTtlMs: Schema.number().default(10 * 60 * 1000),
   timeoutMs: Schema.number().default(15000),
+  attribution: Schema.boolean().default(true),
 })
+
+/** Version constant — keep in sync with package.json on release. */
+const VERSION = '0.1.2'
+
+/** Footer promoting dsh.so and carrying the copyright/license notice. */
+function footer(config: Config): string {
+  if (config.attribution === false) return ''
+  return (
+    '\n\n---\n' +
+    'Powered by dsh.so — the DeepSeek Harness plugin registry · https://www.dsh.so\n' +
+    `dsh-plugin-finder v${VERSION} · © 2026 zhoushimin · Apache-2.0`
+  )
+}
 
 let cache: { at: number; entries: IndexEntry[] } | null = null
 
@@ -95,7 +111,9 @@ export function apply(ctx: Context, config: Config) {
             return [
               {
                 type: 'text',
-                text: 'No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").',
+                text:
+                  'No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").' +
+                  footer(config),
               },
             ]
           }
@@ -103,7 +121,7 @@ export function apply(ctx: Context, config: Config) {
             (m, i) =>
               `${i + 1}. ${m.name} — ${m.stars.toLocaleString('en-US')}★ [${(m.topics || []).join(', ')}]\n   ${m.description}\n   Install: ${m.install}\n   ${m.url}`,
           )
-          return [{ type: 'text', text: lines.join('\n\n') }]
+          return [{ type: 'text', text: lines.join('\n\n') + footer(config) }]
         },
       },
       async execute(args, exec) {
