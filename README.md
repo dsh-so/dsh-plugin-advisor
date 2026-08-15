@@ -2,7 +2,7 @@
 
 Find DeepSeek Harness plugins from the [dsh.so](https://dsh.so) registry — like *find-skill*, but for dsh plugins.
 
-This plugin registers one agent tool, **`find_plugin`**: describe a need in natural language, and it searches the dsh.so plugin index for the best-matching plugins, returning name, GitHub stars, topics, description, an **install command**, and a detail link.
+This plugin registers one agent tool, **`find_plugin`**: describe a need in natural language, and it searches the dsh.so plugin index for the best-matching plugins, returning name, GitHub stars, topics, description, **verification level (L1–L5)**, **security status & risk**, an **install command**, and a detail link.
 
 <p align="center">
   <a href="https://www.dsh.so" rel="dofollow">
@@ -152,23 +152,23 @@ For daily use: **just ignore the warning**.
 
 ## 4. Output Format
 
-Each result includes: rank, plugin name, stars, topics, description, install command, detail link. Real examples below were captured from the live registry — ranks and star counts drift over time.
+Each result includes: rank, plugin name, stars, topics, **verification level (L1–L5)** and **security status/risk** badges, description, install command, detail link. Real examples below were captured from the live registry — ranks and star counts drift over time.
 
 **`find_plugin("vision OCR screenshots", limit=3)`**
 
 ```
-1. dsh-vision-router — 46★ [developer, vision]
+1. dsh-vision-router — 46★ [developer, vision] · L2 · Structured · audited/medium
    Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots)……
    Install: dsh plugin --profile web add dsh-vision-router
    https://www.dsh.so/plugins/dsh-vision-router/
 
-2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui]
+2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui] · L2 · Structured · audited/medium
    为纯文本模型"看图"设计更好的视觉工具箱和技能,支持多图理解,图片问答,
    前端UI还原、GUI 自动化等……
    Install: dsh plugin --profile web add agent-vision-toolkit
    https://www.dsh.so/plugins/agent-vision-toolkit/
 
-3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui]
+3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui] · L2 · Structured · audited/medium
    让纯文本模型更好地做视觉任务的DeepSeek Harness插件:带意图的图片问答、长截图 OCR、UI 还原等……
    Install: dsh plugin --profile web add dsh-vision-toolkit
    https://www.dsh.so/plugins/dsh-vision-toolkit/
@@ -177,36 +177,36 @@ Each result includes: rank, plugin name, stars, topics, description, install com
 **`find_plugin("terminal TUI", limit=3)`**
 
 ```
-1. dsh-tianshu-tui — 132★ [terminal, ui]
+1. dsh-tianshu-tui — 132★ [terminal, ui] · L2 · Structured · audited/low
    dsh-tianshu-tui — DeepSeek Harness terminal UI
    Install: dsh plugin --profile web add dsh-tianshu-tui
    https://www.dsh.so/plugins/dsh-tianshu-tui/
 
-2. dsh-whale-tui — 0★ [developer, terminal, ui]
+2. dsh-whale-tui — 0★ [developer, terminal, ui] · L2 · Structured · audited/medium
    grok-build style terminal UI for DeepSeek Harness: a Rust/ratatui TUI shipped as a dsh plugin bundle
    Install: dsh plugin --profile web add dsh-whale-tui
    https://www.dsh.so/plugins/dsh-whale-tui/
 
-3. dsh-tui — 12★ [developer, terminal, ai, ui]
+3. dsh-tui — 4★ [developer, terminal, ai, ui] · L1 · Found · audited/low
    Claude Code-style terminal UI for DeepSeek Harness agents, as an out-of-tree dsh plugin bundle
-   Install: dsh plugin --profile web add dsh-tui-4
+   Install: dsh plugin --profile web add dsh-tui
    https://www.dsh.so/plugins/dsh-tui-4/
 ```
 
 **`find_plugin("memory rag", limit=3)`**
 
 ```
-1. dsh-memory — 2★ [terminal, knowledge, storage]
+1. dsh-memory — 2★ [terminal, knowledge, storage] · L2 · Structured · audited/medium
    Cited memory over DSH's lossless session log — distilled, human-auditable facts with citations……; memory_read/memory_expand tools, recall index, and a dsh-memory CLI.
    Install: dsh plugin --profile web add dsh-memory-2
    https://www.dsh.so/plugins/dsh-memory-2/
 
-2. dsh-memory — 1★ [knowledge, storage]
+2. dsh-memory — 1★ [knowledge, storage] · L2 · Structured · audited/medium
    Durable cross-session SQLite memory for DeepSeek Harness
    Install: dsh plugin --profile web add dsh-memory
    https://www.dsh.so/plugins/dsh-memory/
 
-3. mindspace-dsh-session-memory — 1★ [knowledge, storage]
+3. mindspace-dsh-session-memory — 1★ [knowledge, storage] · L2 · Structured · audited/low
    Editable, session-isolated personalization memory for DeepSeek Harness
    Install: dsh plugin --profile web add mindspace-dsh-session-memory
    https://www.dsh.so/plugins/mindspace-dsh-session-memory/
@@ -220,7 +220,7 @@ No-match response:
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.4 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
+Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.5 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
 
 ---
 
@@ -261,7 +261,7 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 
 ## 7. Data Source & Matching
 
-- **Data source**: `https://www.dsh.so/plugins-index.json` — a machine-readable index of every plugin listed on dsh.so (id, name, description, stars, topics, install, url).
+- **Data source**: `https://www.dsh.so/plugins-index.json` — a machine-readable index of every plugin listed on dsh.so (id, name, description, stars, topics, install, url, verification level, security status & risk).
 - **Matching**: the query is tokenized and each token is scored — name contains +3, topic contains +2, description contains +1; results sort by score, ties by stars, then take the top `limit`.
 - **Cache**: the index is reused within `cacheTtlMs`; no repeated requests.
 

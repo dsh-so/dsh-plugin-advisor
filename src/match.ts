@@ -1,7 +1,28 @@
 /**
  * Matching logic for dsh-plugin-finder — pure functions, no framework imports.
  */
-export interface IndexEntry {
+
+/** dsh.so verification level (L1–L5) — how far the plugin was actually tested. */
+export type IndexVerification = {
+  /** 1 (found) … 5 (feature tested). */
+  level: number
+  /** Human label, e.g. "L2 · Structured". */
+  label: string
+  /** ISO timestamp of the last verification pass. */
+  lastVerifiedAt?: string | null
+}
+
+/** dsh.so automated security scan result. */
+export type IndexSecurity = {
+  status: 'audited' | 'pending' | 'failed' | 'skipped'
+  riskLevel: 'low' | 'medium' | 'high' | 'critical' | 'unknown'
+  scannedAt?: string | null
+  /** Static scan finding counts — present when audited. */
+  counts?: { critical: number; warning: number; info: number }
+  filesScanned?: number
+}
+
+export type IndexEntry = {
   id: string
   name: string
   description: string
@@ -9,6 +30,9 @@ export interface IndexEntry {
   topics: string[]
   install: string
   url: string
+  /** Present when the dsh.so index carries it. */
+  verification?: IndexVerification
+  security?: IndexSecurity
 }
 
 export function tokenize(query: string): string[] {

@@ -2,7 +2,7 @@
 
 在 dsh.so 插件市场中检索 DeepSeek Harness 插件——类似 *find-skill*,但面向 dsh 插件。
 
-本插件在会话中注册一个 **`find_plugin`** 工具:用一句自然语言描述需求,它从 dsh.so 插件市场索引中检索最匹配的插件,返回插件名、GitHub star 数、标签、简介、**安装命令**和详情链接。
+本插件在会话中注册一个 **`find_plugin`** 工具:用一句自然语言描述需求,它从 dsh.so 插件市场索引中检索最匹配的插件,返回插件名、GitHub star 数、标签、简介、**验证级别(L1–L5)**、**安全状态与风险等级**、**安装命令**和详情链接。
 
 <p align="center">
   <a href="https://www.dsh.so" rel="dofollow">
@@ -151,23 +151,23 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 
 ## 4. 返回结果格式
 
-每条结果包含:排名、插件名、star 数、标签、简介、安装命令、详情链接。以下为**真实示例**(取自 dsh.so 实时索引,排名与 star 数会随时间变化)。
+每条结果包含:排名、插件名、star 数、标签、**验证级别(L1–L5)**与**安全状态/风险**徽标、简介、安装命令、详情链接。以下为**真实示例**(取自 dsh.so 实时索引,排名与 star 数会随时间变化)。
 
 **`find_plugin("vision OCR screenshots", limit=3)`**
 
 ```
-1. dsh-vision-router — 46★ [developer, vision]
+1. dsh-vision-router — 46★ [developer, vision] · L2 · Structured · audited/medium
    Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots)……
    Install: dsh plugin --profile web add dsh-vision-router
    https://www.dsh.so/plugins/dsh-vision-router/
 
-2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui]
+2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui] · L2 · Structured · audited/medium
    为纯文本模型"看图"设计更好的视觉工具箱和技能,支持多图理解,图片问答,
    前端UI还原、GUI 自动化等……
    Install: dsh plugin --profile web add agent-vision-toolkit
    https://www.dsh.so/plugins/agent-vision-toolkit/
 
-3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui]
+3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui] · L2 · Structured · audited/medium
    让纯文本模型更好地做视觉任务的DeepSeek Harness插件:带意图的图片问答、长截图 OCR、UI 还原等……
    Install: dsh plugin --profile web add dsh-vision-toolkit
    https://www.dsh.so/plugins/dsh-vision-toolkit/
@@ -176,36 +176,36 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 **`find_plugin("terminal TUI", limit=3)`**
 
 ```
-1. dsh-tianshu-tui — 132★ [terminal, ui]
+1. dsh-tianshu-tui — 132★ [terminal, ui] · L2 · Structured · audited/low
    dsh-tianshu-tui — DeepSeek Harness terminal UI
    Install: dsh plugin --profile web add dsh-tianshu-tui
    https://www.dsh.so/plugins/dsh-tianshu-tui/
 
-2. dsh-whale-tui — 0★ [developer, terminal, ui]
+2. dsh-whale-tui — 0★ [developer, terminal, ui] · L2 · Structured · audited/medium
    grok-build style terminal UI for DeepSeek Harness: a Rust/ratatui TUI shipped as a dsh plugin bundle
    Install: dsh plugin --profile web add dsh-whale-tui
    https://www.dsh.so/plugins/dsh-whale-tui/
 
-3. dsh-tui — 12★ [developer, terminal, ai, ui]
+3. dsh-tui — 4★ [developer, terminal, ai, ui] · L1 · Found · audited/low
    Claude Code-style terminal UI for DeepSeek Harness agents, as an out-of-tree dsh plugin bundle
-   Install: dsh plugin --profile web add dsh-tui-4
+   Install: dsh plugin --profile web add dsh-tui
    https://www.dsh.so/plugins/dsh-tui-4/
 ```
 
 **`find_plugin("memory rag", limit=3)`**
 
 ```
-1. dsh-memory — 2★ [terminal, knowledge, storage]
+1. dsh-memory — 2★ [terminal, knowledge, storage] · L2 · Structured · audited/medium
    Cited memory over DSH's lossless session log — distilled, human-auditable facts with citations……; memory_read/memory_expand tools, recall index, and a dsh-memory CLI.
    Install: dsh plugin --profile web add dsh-memory-2
    https://www.dsh.so/plugins/dsh-memory-2/
 
-2. dsh-memory — 1★ [knowledge, storage]
+2. dsh-memory — 1★ [knowledge, storage] · L2 · Structured · audited/medium
    Durable cross-session SQLite memory for DeepSeek Harness
    Install: dsh plugin --profile web add dsh-memory
    https://www.dsh.so/plugins/dsh-memory/
 
-3. mindspace-dsh-session-memory — 1★ [knowledge, storage]
+3. mindspace-dsh-session-memory — 1★ [knowledge, storage] · L2 · Structured · audited/low
    Editable, session-isolated personalization memory for DeepSeek Harness
    Install: dsh plugin --profile web add mindspace-dsh-session-memory
    https://www.dsh.so/plugins/mindspace-dsh-session-memory/
@@ -219,7 +219,7 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.4 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
+每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.5 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
 
 ---
 
@@ -260,7 +260,7 @@ No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g
 
 ## 7. 数据来源与匹配规则
 
-- **数据源**:`https://www.dsh.so/plugins-index.json` —— dsh.so 全部插件的机器可读索引(id、name、description、stars、topics、install、url)。
+- **数据源**:`https://www.dsh.so/plugins-index.json` —— dsh.so 全部插件的机器可读索引(id、name、description、stars、topics、install、url、verification 验证级别、security 安全状态与风险)。
 - **匹配**:query 分词后对每个 token 打分——名称包含 +3、标签包含 +2、简介包含 +1;按总分排序,同分按 star 数排序,取前 `limit` 条。
 - **缓存**:索引在 `cacheTtlMs` 内复用,不重复请求。
 
