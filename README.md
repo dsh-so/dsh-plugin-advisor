@@ -6,7 +6,7 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
 
 <p align="center">
   <a href="https://www.dsh.so" rel="dofollow">
-    <img src="assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
+    <img src="https://raw.githubusercontent.com/ihuajiu/dsh-plugin-finder/main/assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
   </a>
   <br>
   <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
