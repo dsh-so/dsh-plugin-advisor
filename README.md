@@ -4,7 +4,15 @@ Find DeepSeek Harness plugins from the [dsh.so](https://dsh.so) registry — lik
 
 This plugin registers one agent tool, **`find_plugin`**: describe a need in natural language, and it searches the dsh.so plugin index for the best-matching plugins, returning name, GitHub stars, topics, description, an **install command**, and a detail link.
 
-> **Registry**: <a href="https://www.dsh.so" rel="dofollow">dsh.so</a> — the DeepSeek Harness plugin registry
+<p align="center">
+  <a href="https://www.dsh.so" rel="dofollow">
+    <img src="assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
+  </a>
+  <br>
+  <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
+  <br>
+  <em>the DeepSeek Harness plugin registry — discover, compare and install plugins · 发现、对比并安装 DSH 插件</em>
+</p>
 
 **中文版**: [README.zh.md](README.zh.md)
 

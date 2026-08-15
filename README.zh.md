@@ -4,7 +4,15 @@
 
 本插件在会话中注册一个 **`find_plugin`** 工具:用一句自然语言描述需求,它从 dsh.so 插件市场索引中检索最匹配的插件,返回插件名、GitHub star 数、标签、简介、**安装命令**和详情链接。
 
-> **收录**: <a href="https://www.dsh.so" rel="dofollow">dsh.so</a> — DeepSeek Harness 插件市场
+<p align="center">
+  <a href="https://www.dsh.so" rel="dofollow">
+    <img src="assets/dsh-so-logo.svg" alt="dsh.so 标志" width="72">
+  </a>
+  <br>
+  <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
+  <br>
+  <em>DeepSeek Harness 插件市场——发现、对比并安装插件</em>
+</p>
 
 **English**: [README.md](README.md)
 
