@@ -219,7 +219,7 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.5 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
+每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.6 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
 
 ---
 
