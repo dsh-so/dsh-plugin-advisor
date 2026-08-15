@@ -157,18 +157,18 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
 **`find_plugin("vision OCR screenshots", limit=3)`**
 
 ```
-1. dsh-vision-router — 46★ [developer, vision] · L2 · Structured · audited/medium
+1. dsh-vision-router — 46★ [developer, vision] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
    Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots)……
    Install: dsh plugin --profile web add dsh-vision-router
    https://www.dsh.so/plugins/dsh-vision-router/
 
-2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui] · L2 · Structured · audited/medium
+2. agent-vision-toolkit — 819★ [developer, vision, automation, ai, ui] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
    为纯文本模型"看图"设计更好的视觉工具箱和技能,支持多图理解,图片问答,
    前端UI还原、GUI 自动化等……
    Install: dsh plugin --profile web add agent-vision-toolkit
    https://www.dsh.so/plugins/agent-vision-toolkit/
 
-3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui] · L2 · Structured · audited/medium
+3. dsh-vision-toolkit — 317★ [vision, browser, automation, ui] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
    让纯文本模型更好地做视觉任务的DeepSeek Harness插件:带意图的图片问答、长截图 OCR、UI 还原等……
    Install: dsh plugin --profile web add dsh-vision-toolkit
    https://www.dsh.so/plugins/dsh-vision-toolkit/
@@ -182,7 +182,7 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
    Install: dsh plugin --profile web add dsh-tianshu-tui
    https://www.dsh.so/plugins/dsh-tianshu-tui/
 
-2. dsh-whale-tui — 0★ [developer, terminal, ui] · L2 · Structured · audited/medium
+2. dsh-whale-tui — 0★ [developer, terminal, ui] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
    grok-build style terminal UI for DeepSeek Harness: a Rust/ratatui TUI shipped as a dsh plugin bundle
    Install: dsh plugin --profile web add dsh-whale-tui
    https://www.dsh.so/plugins/dsh-whale-tui/
@@ -196,12 +196,12 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
 **`find_plugin("memory rag", limit=3)`**
 
 ```
-1. dsh-memory — 2★ [terminal, knowledge, storage] · L2 · Structured · audited/medium
+1. dsh-memory — 2★ [terminal, knowledge, storage] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
    Cited memory over DSH's lossless session log — distilled, human-auditable facts with citations……; memory_read/memory_expand tools, recall index, and a dsh-memory CLI.
    Install: dsh plugin --profile web add dsh-memory-2
    https://www.dsh.so/plugins/dsh-memory-2/
 
-2. dsh-memory — 1★ [knowledge, storage] · L2 · Structured · audited/medium
+2. dsh-memory — 1★ [knowledge, storage] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
    Durable cross-session SQLite memory for DeepSeek Harness
    Install: dsh plugin --profile web add dsh-memory
    https://www.dsh.so/plugins/dsh-memory/

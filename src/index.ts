@@ -2,7 +2,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import Schema from '@deepseek-ai/schemastery'
 import { findMatches } from './match.js'
-import type { IndexEntry } from './match.js'
+import type { IndexEntry, IndexVerification, IndexSecurity } from './match.js'
 
 export const name = 'dsh-plugin-finder'
 export const inject = ['tools']
@@ -39,6 +39,25 @@ function footer(config: Config): string {
     'Powered by dsh.so — the DeepSeek Harness plugin registry · https://www.dsh.so\n' +
     `dsh-plugin-finder v${VERSION} · © 2026 zhoushimin · Apache-2.0`
   )
+}
+
+/** Plain-language verification badge (novice-friendly). */
+function verificationBadge(v?: IndexVerification | null): string | null {
+  if (!v?.level) return null
+  return v.level >= 2 ? '✔ 基础验证通过' : '✔ 已收录(未功能测试)'
+}
+
+/** Plain-language security badge (novice-friendly). */
+function securityBadge(s?: IndexSecurity | null): string | null {
+  if (!s) return null
+  if (s.status === 'pending' || s.riskLevel === 'unknown') return '⏳ 安全检测进行中'
+  if (s.status === 'failed') return '❓ 安全检测未通过'
+  if (s.riskLevel === 'high' || s.riskLevel === 'critical') return '🚨 安全警告:高风险'
+  if (s.riskLevel === 'medium') {
+    const n = s.counts && s.counts.critical > 0 ? `(${s.counts.critical} 个严重问题)` : ''
+    return `⚠️ 安全提示:中风险${n}`
+  }
+  return '🔒 安全通过:低风险'
 }
 
 let cache: { at: number; entries: IndexEntry[] } | null = null
@@ -137,11 +156,10 @@ export function apply(ctx: Context, config: Config) {
           }
           const lines = matches.map((m, i) => {
             const badges: string[] = []
-            if (m.verification?.label) badges.push(m.verification.label)
-            if (m.security) {
-              const risk = m.security.riskLevel && m.security.riskLevel !== 'unknown' ? '/' + m.security.riskLevel : ''
-              badges.push(m.security.status + risk)
-            }
+            const vb = verificationBadge(m.verification)
+            const sb = securityBadge(m.security)
+            if (vb) badges.push(vb)
+            if (sb) badges.push(sb)
             const head =
               `${i + 1}. ${m.name} — ${m.stars.toLocaleString('en-US')}★ [${(m.topics || []).join(', ')}]` +
               (badges.length ? ' · ' + badges.join(' · ') : '')
