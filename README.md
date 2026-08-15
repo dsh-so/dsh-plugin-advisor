@@ -65,6 +65,22 @@ dsh web
 
 After the restart, the `find_plugin` tool appears in the session — just tell the agent what you need (see [Usage](#3-usage)).
 
+### Upgrade / 升级
+
+```sh
+dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@latest'
+dsh web    # restart to load the new bundle
+```
+
+### Uninstall / 卸载
+
+```sh
+dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'
+dsh web    # restart to unload the bundle
+```
+
+> ⚠️ Always remove by **package name** — never pass a local path to `remove`/`del`, or it deletes the source directory's files / 卸载务必用**包名**,绝不把本地路径传给 `remove`/`del`,否则会删掉源码目录的文件。
+
 ---
 
 ## 2. Peer Dependency Warnings (Important)
@@ -290,6 +306,18 @@ A: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@latest'`, then resta
 
 **Q: How do I uninstall?**
 A: `dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'`, then restart.
+
+**Q: PowerShell error "The splatting operator '@' cannot be used..."?**
+A: PowerShell treats a leading `@` as the splat operator. **Quote the package name**: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'` (quotes are optional in bash/zsh but required in PowerShell).
+
+**Q: Boot fails with `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-plugin-finder'`?**
+A: A stale install entry (or the bundle patch `name`) still references the old unscoped name. Remove by package name and reinstall: `dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'`, then `add` again.
+
+**Q: The npmjs.com page shows an older version than the registry?**
+A: The website caches; the registry is authoritative. Verify in a terminal: `npm view '@dsh.so/dsh-plugin-finder' version --prefer-online`; hard-refresh the page (Ctrl+F5) or wait a few minutes.
+
+**Q: How do I check which version is installed?**
+A: `dsh plugin --profile web list` shows the profile's dependency; `npm view '@dsh.so/dsh-plugin-finder' version` shows the latest on npm.
 
 ---
 

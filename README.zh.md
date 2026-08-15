@@ -65,6 +65,22 @@ dsh web
 
 重启后,会话里就会出现 `find_plugin` 工具,直接对助手说需求即可触发(见[使用方法](#3-使用方法))。
 
+### 升级
+
+```sh
+dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@latest'
+dsh web    # 重启以加载新 bundle
+```
+
+### 卸载
+
+```sh
+dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'
+dsh web    # 重启以卸载 bundle
+```
+
+> ⚠️ 卸载务必用**包名**,绝不把本地路径传给 `remove`/`del`,否则会删掉源码目录的文件。
+
 ---
 
 ## 2. 安装时的 peer 依赖警告(重要)
@@ -289,6 +305,18 @@ A: `dsh plugin --profile web add '@dsh.so/dsh-plugin-finder@latest'`,然后重�
 
 **Q: 怎么卸载?**
 A: `dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'`,然后重启。
+
+**Q: PowerShell 报错 "The splatting operator '@' cannot be used..."?**
+A: PowerShell 把行首 `@` 当成展开运算符。**给包名加引号**:`dsh plugin --profile web add '@dsh.so/dsh-plugin-finder'`(bash/zsh 下引号可选,PowerShell 必须加)。
+
+**Q: 启动报 `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-plugin-finder'`?**
+A: 有残留的安装条目(或 bundle patch 的 `name`)仍引用旧的无 scope 包名。先按包名移除再重装:`dsh plugin --profile web remove '@dsh.so/dsh-plugin-finder'`,然后重新 `add`。
+
+**Q: npmjs.com 页面显示的版本比注册表旧?**
+A: 网页有缓存,注册表才是权威。终端验证:`npm view '@dsh.so/dsh-plugin-finder' version --prefer-online`;网页硬刷新(Ctrl+F5)或稍等几分钟。
+
+**Q: 怎么查看当前安装的版本?**
+A: `dsh plugin --profile web list` 看 profile 的依赖;`npm view '@dsh.so/dsh-plugin-finder' version` 看 npm 上的最新版。
 
 ---
 
