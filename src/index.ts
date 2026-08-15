@@ -36,7 +36,7 @@ function footer(config: Config): string {
   if (config.attribution === false) return ''
   return (
     '\n\n---\n' +
-    'Powered by dsh.so — the DeepSeek Harness plugin marketplace · https://www.dsh.so\n' +
+    'Powered by dsh.so — the DeepSeek Harness plugin registry · https://www.dsh.so\n' +
     `dsh-plugin-finder v${VERSION} · © 2026 zhoushimin · Apache-2.0`
   )
 }
@@ -68,7 +68,7 @@ export function apply(ctx: Context, config: Config) {
     defineTool({
       name: 'find_plugin',
       description:
-        'Search the dsh.so plugin marketplace for DeepSeek Harness plugins that match a need. ' +
+        'Search the dsh.so registry of DeepSeek Harness plugins for ones that match a need. ' +
         'Returns plugin name, GitHub stars, topics, an install command, and a detail link. ' +
         'Use when the user wants to find, compare, or install a dsh plugin.',
       parameters: {
@@ -112,7 +112,7 @@ export function apply(ctx: Context, config: Config) {
               {
                 type: 'text',
                 text:
-                  'No plugins in the dsh.so plugin marketplace matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").' +
+                  'No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").' +
                   footer(config),
               },
             ]
