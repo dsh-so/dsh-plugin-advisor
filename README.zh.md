@@ -97,6 +97,13 @@ WARN  Issues with peer dependencies found
 | `@deepseek-ai/dsh-tools@0.1.0-rc.6` | 0.1.0-rc.6 | ✅ |
 | `@deepseek-ai/schemastery@^3.18.1` | 3.18.1 | ✅ |
 
+### dsh 适配版本 / Compatibility with dsh
+
+- **目标依赖线**:`@deepseek-ai/dsh-tools@0.1.0-rc.6` · `@deepseek-ai/cordis@^4.0.1` · `@deepseek-ai/schemastery@^3.18.1`(即 dsh rc.6 系列)。
+- **实测环境**:dsh 10.28.1(web profile)。
+- **状态**:作者声明(Declared),未经独立验证——遵循 dsh.so 兼容性矩阵语义。
+- **升级 dsh 后自查**:重启 profile,确认 `find_plugin` 存在;若大版本升级跨了依赖线,先执行 `dsh plugin --profile web update '@dsh.so/dsh-plugin-finder'` 再试。
+
 > 事实上,DSH 生态里**任何**正确声明了 peer 依赖的第三方插件,装进 profile 时都会出现类似的警告(harness 自己的 `@deepseek-ai/dsh-tool-cordis` 也是这么声明 `@deepseek-ai/cordis` 的)。这是 pnpm 的"信息缺失"提示,不是错误。
 
 ### 不建议的"修复"方式

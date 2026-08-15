@@ -97,6 +97,13 @@ Just confirm the host-side versions satisfy the plugin's requirements. Verified 
 | `@deepseek-ai/dsh-tools@0.1.0-rc.6` | 0.1.0-rc.6 | ✅ |
 | `@deepseek-ai/schemastery@^3.18.1` | 3.18.1 | ✅ |
 
+### Compatibility with dsh / dsh 适配版本
+
+- **Target dependency line / 目标依赖线**: `@deepseek-ai/dsh-tools@0.1.0-rc.6` · `@deepseek-ai/cordis@^4.0.1` · `@deepseek-ai/schemastery@^3.18.1` — the dsh rc.6 release line / 即 dsh rc.6 系列。
+- **Tested on / 实测环境**: dsh 10.28.1 (web profile).
+- **Status / 状态**: author-declared (Declared), not independently verified — follows dsh.so's compatibility-matrix semantics / 作者声明(Declared),未经独立验证——遵循 dsh.so 兼容性矩阵语义。
+- **After upgrading dsh / 升级 dsh 后自查**: restart the profile and confirm `find_plugin` appears; if a major dsh upgrade crosses the dependency line, run `dsh plugin --profile web update '@dsh.so/dsh-plugin-finder'` before retrying / 重启 profile 并确认 `find_plugin` 存在;若大版本升级跨了依赖线,先执行 `dsh plugin --profile web update '@dsh.so/dsh-plugin-finder'` 再试。
+
 > In fact, **any** third-party DSH plugin that correctly declares peer dependencies triggers the same warning when installed into a profile (the harness's own `@deepseek-ai/dsh-tool-cordis` declares `@deepseek-ai/cordis` the same way). It is pnpm being "under-informed", not an error.
 
 ### Fixes to avoid
