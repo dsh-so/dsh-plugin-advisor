@@ -14,7 +14,7 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
   <em>the DeepSeek Harness plugin registry — discover, compare and install plugins · 发现、对比并安装 DSH 插件</em>
 </p>
 
-**中文版**: [README.zh.md](README.zh.md)
+**中文版**: [README.zh.md](https://github.com/ihuajiu/dsh-plugin-finder/blob/main/README.zh.md)
 
 ## Table of Contents
 
@@ -220,7 +220,7 @@ No-match response:
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.3 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
+Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.4 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
 
 ---
 

@@ -14,7 +14,7 @@
   <em>DeepSeek Harness 插件市场——发现、对比并安装插件</em>
 </p>
 
-**English**: [README.md](README.md)
+**English**: [README.md](https://github.com/ihuajiu/dsh-plugin-finder/blob/main/README.md)
 
 ## 目录
 
@@ -219,7 +219,7 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.3 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
+每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.4 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
 
 ---
 
