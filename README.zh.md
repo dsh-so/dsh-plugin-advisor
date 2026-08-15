@@ -35,14 +35,14 @@
 从 dsh.so 插件市场安装(推荐):
 
 ```sh
-dsh plugin --profile web add dsh-plugin-finder
+dsh plugin --profile web add @dsh.so/dsh-plugin-finder
 ```
 
 其他 profile 同理,替换名字即可:
 
 ```sh
-dsh plugin --profile tui add dsh-plugin-finder
-dsh plugin --profile headless add dsh-plugin-finder
+dsh plugin --profile tui add @dsh.so/dsh-plugin-finder
+dsh plugin --profile headless add @dsh.so/dsh-plugin-finder
 ```
 
 从本地源码目录安装(开发调试时):
@@ -54,7 +54,7 @@ dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
 > ⚠️ **版本提示**:若你装的是 **0.1.0**,请先升级——0.1.0 把 `@deepseek-ai/dsh-tools` 装成了普通依赖,会与宿主副本冲突导致 agent 循环崩溃(`Cannot read properties of undefined (reading 'prepare')`)。**0.1.1 已修复**,重新安装:
 >
 > ```sh
-> dsh plugin --profile web add dsh-plugin-finder@^0.1.1
+> dsh plugin --profile web add @dsh.so/dsh-plugin-finder@^0.1.1
 > ```
 
 安装完成后,**重启 web profile** 才能生效:
@@ -73,7 +73,7 @@ dsh web
 
 ```
 WARN  Issues with peer dependencies found
-└─┬ dsh-plugin-finder 0.1.1
+└─┬ @dsh.so/dsh-plugin-finder 0.1.1
   ├── ✕ missing peer @deepseek-ai/cordis@^4.0.1
   ├── ✕ missing peer @deepseek-ai/dsh-tools@0.1.0-rc.6
   └── ✕ missing peer @deepseek-ai/schemastery@^3.18.1
@@ -83,7 +83,7 @@ WARN  Issues with peer dependencies found
 
 ### 为什么会出现
 
-- `dsh plugin add` 的机制是在 profile 目录下执行 `pnpm add`;pnpm 校验 peer 依赖时,**只看 web profile 自己声明的依赖**(目前只有 `dsh-plugin-finder` 一个)。
+- `dsh plugin add` 的机制是在 profile 目录下执行 `pnpm add`;pnpm 校验 peer 依赖时,**只看 web profile 自己声明的依赖**(目前只有 `@dsh.so/dsh-plugin-finder` 一个)。
 - 而这 3 个 `@deepseek-ai/*` 包由 **DSH 宿主(harness)统一管理**,实际安装在上一级目录 `~/.dsh/profiles/node_modules`。
 - 运行时,Node 的模块解析会**逐级向上查找**,所以插件能正常 `import` 到宿主提供的这些包。
 
@@ -278,10 +278,10 @@ A: 不用管,是误报,见[第 2 节](#2-安装时的-peer-依赖警告重要)�
 A: 换更宽的英文词,如 `"image"`、`"terminal"`、`"memory"`;或去掉过具体的限定词。
 
 **Q: 插件升级了,怎么更新?**
-A: `dsh plugin --profile web add dsh-plugin-finder@latest`,然后重启。
+A: `dsh plugin --profile web add @dsh.so/dsh-plugin-finder@latest`,然后重启。
 
 **Q: 怎么卸载?**
-A: `dsh plugin --profile web remove dsh-plugin-finder`,然后重启。
+A: `dsh plugin --profile web remove @dsh.so/dsh-plugin-finder`,然后重启。
 
 ---
 
