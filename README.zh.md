@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://www.dsh.so" rel="dofollow">
-    <img src="https://raw.githubusercontent.com/ihuajiu/dsh-plugin-finder/main/assets/dsh-so-logo.svg" alt="dsh.so 标志" width="72">
+    <img src="https://raw.githubusercontent.com/ihuajiu/dsh-plugins-finder/main/assets/dsh-so-logo.svg" alt="dsh.so 标志" width="72">
   </a>
   <br>
   <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
@@ -14,7 +14,7 @@
   <em>DeepSeek Harness 插件市场——发现、对比并安装插件</em>
 </p>
 
-**English**: [README.md](https://github.com/ihuajiu/dsh-plugin-finder/blob/main/README.md)
+**English**: [README.md](https://github.com/ihuajiu/dsh-plugins-finder/blob/main/README.md)
 
 ## 目录
 

@@ -6,7 +6,7 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
 
 <p align="center">
   <a href="https://www.dsh.so" rel="dofollow">
-    <img src="https://raw.githubusercontent.com/ihuajiu/dsh-plugin-finder/main/assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
+    <img src="https://raw.githubusercontent.com/ihuajiu/dsh-plugins-finder/main/assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
   </a>
   <br>
   <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
@@ -14,7 +14,7 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
   <em>the DeepSeek Harness plugin registry — discover, compare and install plugins · 发现、对比并安装 DSH 插件</em>
 </p>
 
-**中文版**: [README.zh.md](https://github.com/ihuajiu/dsh-plugin-finder/blob/main/README.zh.md)
+**中文版**: [README.zh.md](https://github.com/ihuajiu/dsh-plugins-finder/blob/main/README.zh.md)
 
 ## Table of Contents
 
