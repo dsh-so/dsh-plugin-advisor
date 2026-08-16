@@ -29,7 +29,7 @@ export const Config: Schema<Config> = Schema.object({
 })
 
 /** Version constant — keep in sync with package.json on release. */
-const VERSION = '0.1.7'
+const VERSION = '0.1.8'
 
 /** Footer promoting dsh.so and carrying the copyright/license notice. */
 function footer(config: Config): string {
