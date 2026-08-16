@@ -35,14 +35,14 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
 Install from the dsh.so marketplace (recommended):
 
 ```sh
-dsh plugin --profile web add dsh-plugin-finder
+dsh plugin --profile web add dsh-plugins-finder
 ```
 
 Other profiles work the same — just change the name:
 
 ```sh
-dsh plugin --profile tui add dsh-plugin-finder
-dsh plugin --profile headless add dsh-plugin-finder
+dsh plugin --profile tui add dsh-plugins-finder
+dsh plugin --profile headless add dsh-plugins-finder
 ```
 
 Install from a local checkout (development):
@@ -54,7 +54,7 @@ dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
 > ⚠️ **Version note**: if you have **0.1.0**, upgrade first — 0.1.0 installed `@deepseek-ai/dsh-tools` as a regular dependency, which conflicts with the host's copy and crashes the agent loop with `Cannot read properties of undefined (reading 'prepare')`. **Fixed in 0.1.1**; reinstall with:
 >
 > ```sh
-> dsh plugin --profile web add 'dsh-plugin-finder@^0.1.1'
+> dsh plugin --profile web add dsh-plugins-finder@^0.1.1
 > ```
 
 **Restart the web profile** for the new bundle to load:
@@ -68,14 +68,14 @@ After the restart, the `find_plugin` tool appears in the session — just tell t
 ### Upgrade / 升级
 
 ```sh
-dsh plugin --profile web add 'dsh-plugin-finder@latest'
+dsh plugin --profile web add dsh-plugins-finder@latest
 dsh web    # restart to load the new bundle
 ```
 
 ### Uninstall / 卸载
 
 ```sh
-dsh plugin --profile web remove dsh-plugin-finder
+dsh plugin --profile web remove dsh-plugins-finder
 dsh web    # restart to unload the bundle
 ```
 
@@ -89,7 +89,7 @@ You will very likely see this pnpm output during install:
 
 ```
 WARN  Issues with peer dependencies found
-└─┬ dsh-plugin-finder 0.1.1
+└─┬ dsh-plugins-finder 0.1.1
   ├── ✕ missing peer @deepseek-ai/cordis@^4.0.1
   ├── ✕ missing peer @deepseek-ai/dsh-tools@0.1.0-rc.6
   └── ✕ missing peer @deepseek-ai/schemastery@^3.18.1
@@ -99,7 +99,7 @@ WARN  Issues with peer dependencies found
 
 ### Why it appears
 
-- `dsh plugin add` works by running `pnpm add` in the profile directory; pnpm checks peer dependencies **only against the web profile's own declared dependencies** (currently just `dsh-plugin-finder`).
+- `dsh plugin add` works by running `pnpm add` in the profile directory; pnpm checks peer dependencies **only against the web profile's own declared dependencies** (currently just `dsh-plugins-finder`).
 - The three `@deepseek-ai/*` packages are **managed by the DSH host** and actually live one level up, in `~/.dsh/profiles/node_modules`.
 - At runtime, Node's module resolution **walks up the directory tree**, so the plugin resolves the host-provided packages just fine.
 
@@ -118,7 +118,7 @@ Just confirm the host-side versions satisfy the plugin's requirements. Verified 
 - **Target dependency line / 目标依赖线**: `@deepseek-ai/dsh-tools@0.1.0-rc.6` · `@deepseek-ai/cordis@^4.0.1` · `@deepseek-ai/schemastery@^3.18.1` — the dsh rc.6 release line / 即 dsh rc.6 系列。
 - **Tested on / 实测环境**: dsh 10.28.1 (web profile).
 - **Status / 状态**: author-declared (Declared), not independently verified — follows dsh.so's compatibility-matrix semantics / 作者声明(Declared),未经独立验证——遵循 dsh.so 兼容性矩阵语义。
-- **After upgrading dsh / 升级 dsh 后自查**: restart the profile and confirm `find_plugin` appears; if a major dsh upgrade crosses the dependency line, run `dsh plugin --profile web update dsh-plugin-finder` before retrying / 重启 profile 并确认 `find_plugin` 存在;若大版本升级跨了依赖线,先执行 `dsh plugin --profile web update dsh-plugin-finder` 再试。
+- **After upgrading dsh / 升级 dsh 后自查**: restart the profile and confirm `find_plugin` appears; if a major dsh upgrade crosses the dependency line, run `dsh plugin --profile web update dsh-plugins-finder` before retrying / 重启 profile 并确认 `find_plugin` 存在;若大版本升级跨了依赖线,先执行 `dsh plugin --profile web update dsh-plugins-finder` 再试。
 
 > In fact, **any** third-party DSH plugin that correctly declares peer dependencies triggers the same warning when installed into a profile (the harness's own `@deepseek-ai/dsh-tool-cordis` declares `@deepseek-ai/cordis` the same way). It is pnpm being "under-informed", not an error.
 
@@ -264,7 +264,7 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 ```yaml
 - insert:
     - id: dsh-plugin-finder
-      name: dsh-plugin-finder
+      name: dsh-plugins-finder
       config:
         indexUrl: https://www.dsh.so/plugins-index.json   # override for self-host / testing
         maxResults: 5                                      # default result count
@@ -302,22 +302,22 @@ A: No — they are a false positive; see [Section 2](#2-peer-dependency-warnings
 A: Use broader English terms such as `"image"`, `"terminal"`, `"memory"`, or drop overly specific qualifiers.
 
 **Q: How do I update the plugin?**
-A: `dsh plugin --profile web add 'dsh-plugin-finder@latest'`, then restart.
+A: `dsh plugin --profile web add dsh-plugins-finder@latest`, then restart.
 
 **Q: How do I uninstall?**
-A: `dsh plugin --profile web remove dsh-plugin-finder`, then restart.
+A: `dsh plugin --profile web remove dsh-plugins-finder`, then restart.
 
 **Q: PowerShell error "The splatting operator '@' cannot be used..."?**
 A: That only happens with **scoped** packages (`@scope/name`) — PowerShell treats a leading `@` as the splat operator, so quote the name: `dsh plugin --profile web add '@scope/name'`. This plugin is **unscoped**, so no quotes are needed.
 
-**Q: Boot fails with `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-plugin-finder'`?**
-A: A stale install entry (or the bundle patch `name`) still references the old unscoped name. Remove by package name and reinstall: `dsh plugin --profile web remove dsh-plugin-finder`, then `add` again.
+**Q: Boot fails with `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-plugins-finder'`?**
+A: A stale install entry (or the bundle patch `name`) still references the old unscoped name. Remove by package name and reinstall: `dsh plugin --profile web remove dsh-plugins-finder`, then `add` again.
 
 **Q: The npmjs.com page shows an older version than the registry?**
-A: The website caches; the registry is authoritative. Verify in a terminal: `npm view dsh-plugin-finder version --prefer-online`; hard-refresh the page (Ctrl+F5) or wait a few minutes.
+A: The website caches; the registry is authoritative. Verify in a terminal: `npm view dsh-plugins-finder version --prefer-online`; hard-refresh the page (Ctrl+F5) or wait a few minutes.
 
 **Q: How do I check which version is installed?**
-A: `dsh plugin --profile web list` shows the profile's dependency; `npm view dsh-plugin-finder version` shows the latest on npm.
+A: `dsh plugin --profile web list` shows the profile's dependency; `npm view dsh-plugins-finder version` shows the latest on npm.
 
 ---
 
