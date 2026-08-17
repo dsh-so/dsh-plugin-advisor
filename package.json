@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "dsh-plugins-finder",
   "version": "0.1.8",
   "description": "Find DeepSeek Harness plugins from the dsh.so registry — like find-skill, but for dsh plugins.",
