@@ -332,6 +332,17 @@ pnpm test        # node --test (match logic unit tests)
 - The bundle patch is declared in `cordis.patch.yml`, referenced by `dsh.bundle.patch` in `package.json`.
 - When publishing to npm, include `lib/`, `cordis.patch.yml`, `README.md`, and `README.zh.md` (see the `files` field in `package.json`).
 
+### Release verification / 发布后自检
+
+After each `npm publish`, run the automated install check to confirm both supported install sources still work against the released artifact:
+
+```sh
+npm run verify:install            # offline: npm registry + GitHub, functional smoke
+npm run verify:install -- --live  # also queries the real dsh.so index
+```
+
+The script installs `dsh-plugins-finder@<version>` from npm and from `github:ihuajiu/dsh-plugins-finder` into throwaway dirs (mirroring a dsh profile's settings), asserts the installed bundle matches the expected name/version and ships `lib/index.js` + `lib/match.js`, then runs a functional smoke of the matching logic. It exits non-zero if either source breaks. `npm run verify` (test + verify:install) is the full gate.
+
 ---
 
 ## License

@@ -10,7 +10,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepublishOnly": "tsc -p tsconfig.json",
-    "test": "node --test"
+    "test": "node --test",
+    "verify:install": "node scripts/verify-install.mjs",
+    "verify": "npm test && npm run verify:install"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
