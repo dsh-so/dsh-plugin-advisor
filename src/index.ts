@@ -70,7 +70,7 @@ async function loadIndex(config: Config, signal?: AbortSignal): Promise<IndexEnt
   try {
     const res = await fetch(config.indexUrl, {
       signal: ctrl.signal,
-      headers: { 'user-agent': 'dsh-plugin-finder/0.1' },
+      headers: { 'user-agent': 'dsh-plugin-advisor/0.1' },
     })
     if (!res.ok) throw new Error('dsh.so index request failed: HTTP ' + res.status)
     const json = (await res.json()) as { plugins?: IndexEntry[] }
@@ -85,7 +85,7 @@ async function loadIndex(config: Config, signal?: AbortSignal): Promise<IndexEnt
 export function apply(ctx: Context, config: Config) {
   ctx.tools.register(
     defineTool({
-      name: 'find_plugin',
+      name: 'plugin_advisor',
       description:
         'Search the dsh.so registry of DeepSeek Harness plugins for ones that match a need. ' +
         'Returns plugin name, GitHub stars, topics, verification level (L1–L5), security status/risk, ' +

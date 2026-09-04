@@ -1,5 +1,9 @@
 {
-  "name": "dsh-plugins-finder",
+  "name": "@dsh-so/dsh-plugin-advisor",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsh-so/dsh-plugin-advisor.git"
+  },
   "version": "0.1.9",
   "description": "Find DeepSeek Harness plugins from the dsh.so registry — like find-skill, but for dsh plugins.",
   "license": "Apache-2.0",

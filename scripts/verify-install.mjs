@@ -71,7 +71,9 @@ async function verify(method, spec) {
     if (inst.status !== 0) {
       throw new Error(`pnpm add exited ${inst.status}:\n${inst.out}`)
     }
-    const installed = join(dir, 'node_modules', NAME)
+    const installed = NAME.startsWith('@')
+      ? join(dir, 'node_modules', ...NAME.split('/'))
+      : join(dir, 'node_modules', NAME)
     if (!existsSync(installed)) throw new Error(`not installed at ${installed}`)
     const detail = await smoke(installed)
 
@@ -97,7 +99,7 @@ async function verify(method, spec) {
 
 console.log(`Verifying ${NAME}@${VERSION} (--live=${LIVE})`)
 let ok = (await verify('npm', `${NAME}@${VERSION}`)) === true
-ok = (await verify('git', `github:ihuajiu/${NAME}`)) && ok
+ok = (await verify('git', `github:dsh-so/dsh-plugin-advisor`)) && ok
 if (!ok) {
   console.error(`\x1b[31m\nVERIFICATION FAILED\x1b[0m`)
   process.exit(1)

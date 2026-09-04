@@ -29,7 +29,7 @@
 > • 结果即答案:名称 / star / 标签 / 简介 / **安装命令** / 详情链接,一条龙
 > • 零配置,装完即用,索引 10 分钟缓存
 >
-> 安装:`dsh plugin --profile web add dsh-plugins-finder`
+> 安装:`dsh plugin --profile web add @dsh-so/dsh-plugin-advisor`
 > 装完重启 `dsh web`,对助手说需求即可。跟 find-skill 找技能一样,这次是找插件。🚀
 
 ---
@@ -42,11 +42,11 @@
 
 **详细介绍(2~3 段)**
 
-> dsh-plugin-finder 在 DeepSeek Harness 会话中注册一个 `find_plugin` 模型工具:你用一句自然语言描述需求(如"vision OCR screenshots""memory rag""终端 TUI"),它就会从 dsh.so 插件市场的实时索引中检索最匹配的插件,并按相关度排序返回——每条结果都包含插件名、GitHub star 数、标签、简介、可直接复制的**安装命令**和详情链接。从"想要"到"装好",全程不需要离开对话。
+> dsh-plugin-finder 在 DeepSeek Harness 会话中注册一个 `plugin_advisor` 模型工具:你用一句自然语言描述需求(如"vision OCR screenshots""memory rag""终端 TUI"),它就会从 dsh.so 插件市场的实时索引中检索最匹配的插件,并按相关度排序返回——每条结果都包含插件名、GitHub star 数、标签、简介、可直接复制的**安装命令**和详情链接。从"想要"到"装好",全程不需要离开对话。
 >
 > 它与 find-skill 找技能的思路一脉相承:不用记插件名、不用翻目录,把"检索"这件小事交给 Agent。内置关键词打分(名称 +3 / 标签 +2 / 简介 +1,同分按 star 数排序),中英文查询均支持;索引 10 分钟缓存、可配置超时,轻量无依赖(仅声明 peer 依赖,宿主统一管理)。
 >
-> 安装: `dsh plugin --profile web add dsh-plugins-finder`(web / tui / headless 等 profile 均适用),重启后即可使用。Apache-2.0 开源。
+> 安装: `dsh plugin --profile web add @dsh-so/dsh-plugin-advisor`(web / tui / headless 等 profile 均适用),重启后即可使用。Apache-2.0 开源。
 
 ---
 
@@ -60,7 +60,7 @@ DeepSeek Harness 的插件生态正在快速生长:dsh.so 上已经有视觉、T
 
 现在,这个烦恼可以交给 Agent 自己解决。
 
-**dsh-plugin-finder** 是一个给 DeepSeek Harness 装"插件搜索引擎"的插件。装好之后,你的会话里会多出一个叫 `find_plugin` 的工具,而它的一切调用都是自动的:你只需要用一句人话说出需求——
+**dsh-plugin-finder** 是一个给 DeepSeek Harness 装"插件搜索引擎"的插件。装好之后,你的会话里会多出一个叫 `plugin_advisor` 的工具,而它的一切调用都是自动的:你只需要用一句人话说出需求——
 
 > "帮我找支持 OCR / 截图转文字的 dsh 插件"
 > "有没有终端 TUI 插件?"
@@ -80,7 +80,7 @@ Agent 会自动检索 dsh.so 的实时插件索引,按相关度排序返回结�
 **开始使用**
 
 ```sh
-dsh plugin --profile web add dsh-plugins-finder
+dsh plugin --profile web add @dsh-so/dsh-plugin-advisor
 ```
 
 重启 `dsh web` 后,对助手说出你的需求即可。插件市场在 dsh.so 等你探索——而你的 Agent,已经知道门牌号了。
@@ -95,10 +95,10 @@ dsh plugin --profile web add dsh-plugins-finder
 
 **Short pitch**
 
-> `dsh-plugin-finder` gives DeepSeek Harness agents a built-in plugin search. Describe a need in plain language ("vision OCR screenshots", "terminal TUI", "memory rag") and the `find_plugin` tool scans the live dsh.so registry, returning ranked matches with name, GitHub stars, topics, description, a copy-paste **install command**, and a detail link. Like find-skill, but for dsh plugins.
+> `dsh-plugin-finder` gives DeepSeek Harness agents a built-in plugin search. Describe a need in plain language ("vision OCR screenshots", "terminal TUI", "memory rag") and the `plugin_advisor` tool scans the live dsh.so registry, returning ranked matches with name, GitHub stars, topics, description, a copy-paste **install command**, and a detail link. Like find-skill, but for dsh plugins.
 >
-> Install: `dsh plugin --profile web add dsh-plugins-finder` · restart `dsh web` · done.
+> Install: `dsh plugin --profile web add @dsh-so/dsh-plugin-advisor` · restart `dsh web` · done.
 
 **Longer (marketplace listing)**
 
-> dsh-plugin-finder registers one agent tool, `find_plugin`, that searches the dsh.so registry of DeepSeek Harness plugins for the ones that match a need. Query in natural language (Chinese or English), and it returns plugin name, stars, topics, description, install command, and detail link — ranked by a lightweight keyword scorer (name +3, topic +2, description +1, ties broken by stars). The index is cached for 10 minutes and fully configurable (indexUrl, maxResults, cacheTtlMs, timeoutMs). Zero runtime dependencies beyond the host-provided peers. Apache-2.0.
+> dsh-plugin-finder registers one agent tool, `plugin_advisor`, that searches the dsh.so registry of DeepSeek Harness plugins for the ones that match a need. Query in natural language (Chinese or English), and it returns plugin name, stars, topics, description, install command, and detail link — ranked by a lightweight keyword scorer (name +3, topic +2, description +1, ties broken by stars). The index is cached for 10 minutes and fully configurable (indexUrl, maxResults, cacheTtlMs, timeoutMs). Zero runtime dependencies beyond the host-provided peers. Apache-2.0.

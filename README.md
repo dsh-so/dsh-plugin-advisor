@@ -2,11 +2,11 @@
 
 Find DeepSeek Harness plugins from the [dsh.so](https://dsh.so) registry — like *find-skill*, but for dsh plugins.
 
-This plugin registers one agent tool, **`find_plugin`**: describe a need in natural language, and it searches the dsh.so plugin index for the best-matching plugins, returning name, GitHub stars, topics, description, **verification level (L1–L5)**, **security status & risk**, an **install command**, and a detail link.
+This plugin registers one agent tool, **`plugin_advisor`**: describe a need in natural language, and it searches the dsh.so plugin index for the best-matching plugins, returning name, GitHub stars, topics, description, **verification level (L1–L5)**, **security status & risk**, an **install command**, and a detail link.
 
 <p align="center">
   <a href="https://www.dsh.so" rel="dofollow">
-    <img src="https://raw.githubusercontent.com/ihuajiu/dsh-plugins-finder/main/assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
+    <img src="https://raw.githubusercontent.com/dsh-so/dsh-plugin-advisor/main/assets/dsh-so-logo.svg" alt="dsh.so logo" width="72">
   </a>
   <br>
   <strong>Powered by <a href="https://www.dsh.so" rel="dofollow">dsh.so</a></strong>
@@ -14,7 +14,7 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
   <em>the DeepSeek Harness plugin registry — discover, compare and install plugins · 发现、对比并安装 DSH 插件</em>
 </p>
 
-**中文版**: [README.zh.md](https://github.com/ihuajiu/dsh-plugins-finder/blob/main/README.zh.md)
+**中文版**: [README.zh.md](https://github.com/dsh-so/dsh-plugin-advisor/blob/main/README.zh.md)
 
 ## Table of Contents
 
@@ -35,14 +35,14 @@ This plugin registers one agent tool, **`find_plugin`**: describe a need in natu
 Install from the dsh.so marketplace (recommended):
 
 ```sh
-dsh plugin --profile web add dsh-plugins-finder
+dsh plugin --profile web add @dsh-so/dsh-plugin-advisor
 ```
 
 Other profiles work the same — just change the name:
 
 ```sh
-dsh plugin --profile tui add dsh-plugins-finder
-dsh plugin --profile headless add dsh-plugins-finder
+dsh plugin --profile tui add @dsh-so/dsh-plugin-advisor
+dsh plugin --profile headless add @dsh-so/dsh-plugin-advisor
 ```
 
 Install from a local checkout (development):
@@ -54,7 +54,7 @@ dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
 > ⚠️ **Version note**: if you have **0.1.0**, upgrade first — 0.1.0 installed `@deepseek-ai/dsh-tools` as a regular dependency, which conflicts with the host's copy and crashes the agent loop with `Cannot read properties of undefined (reading 'prepare')`. **Fixed in 0.1.1**; reinstall with:
 >
 > ```sh
-> dsh plugin --profile web add dsh-plugins-finder@^0.1.1
+> dsh plugin --profile web add @dsh-so/dsh-plugin-advisor@^0.1.1
 > ```
 
 **Restart the web profile** for the new bundle to load:
@@ -63,19 +63,19 @@ dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
 dsh web
 ```
 
-After the restart, the `find_plugin` tool appears in the session — just tell the agent what you need (see [Usage](#3-usage)).
+After the restart, the `plugin_advisor` tool appears in the session — just tell the agent what you need (see [Usage](#3-usage)).
 
 ### Upgrade / 升级
 
 ```sh
-dsh plugin --profile web add dsh-plugins-finder@latest
+dsh plugin --profile web add @dsh-so/dsh-plugin-advisor@latest
 dsh web    # restart to load the new bundle
 ```
 
 ### Uninstall / 卸载
 
 ```sh
-dsh plugin --profile web remove dsh-plugins-finder
+dsh plugin --profile web remove @dsh-so/dsh-plugin-advisor
 dsh web    # restart to unload the bundle
 ```
 
@@ -89,7 +89,7 @@ You will very likely see this pnpm output during install:
 
 ```
 WARN  Issues with peer dependencies found
-└─┬ dsh-plugins-finder 0.1.1
+└─┬ @dsh-so/dsh-plugin-advisor 0.1.1
   ├── ✕ missing peer @deepseek-ai/cordis@^4.0.1
   ├── ✕ missing peer @deepseek-ai/dsh-tools@0.1.0-rc.6
   └── ✕ missing peer @deepseek-ai/schemastery@^3.18.1
@@ -99,7 +99,7 @@ WARN  Issues with peer dependencies found
 
 ### Why it appears
 
-- `dsh plugin add` works by running `pnpm add` in the profile directory; pnpm checks peer dependencies **only against the web profile's own declared dependencies** (currently just `dsh-plugins-finder`).
+- `dsh plugin add` works by running `pnpm add` in the profile directory; pnpm checks peer dependencies **only against the web profile's own declared dependencies** (currently just `@dsh-so/dsh-plugin-advisor`).
 - The three `@deepseek-ai/*` packages are **managed by the DSH host** and actually live one level up, in `~/.dsh/profiles/node_modules`.
 - At runtime, Node's module resolution **walks up the directory tree**, so the plugin resolves the host-provided packages just fine.
 
@@ -118,7 +118,7 @@ Just confirm the host-side versions satisfy the plugin's requirements. Verified 
 - **Target dependency line / 目标依赖线**: `@deepseek-ai/dsh-tools@0.1.0-rc.6` · `@deepseek-ai/cordis@^4.0.1` · `@deepseek-ai/schemastery@^3.18.1` — the dsh rc.6 release line / 即 dsh rc.6 系列。
 - **Tested on / 实测环境**: dsh 10.28.1 (web profile).
 - **Status / 状态**: author-declared (Declared), not independently verified — follows dsh.so's compatibility-matrix semantics / 作者声明(Declared),未经独立验证——遵循 dsh.so 兼容性矩阵语义。
-- **After upgrading dsh / 升级 dsh 后自查**: restart the profile and confirm `find_plugin` appears; if a major dsh upgrade crosses the dependency line, run `dsh plugin --profile web update dsh-plugins-finder` before retrying / 重启 profile 并确认 `find_plugin` 存在;若大版本升级跨了依赖线,先执行 `dsh plugin --profile web update dsh-plugins-finder` 再试。
+- **After upgrading dsh / 升级 dsh 后自查**: restart the profile and confirm `plugin_advisor` appears; if a major dsh upgrade crosses the dependency line, run `dsh plugin --profile web update @dsh-so/dsh-plugin-advisor` before retrying / 重启 profile 并确认 `plugin_advisor` 存在;若大版本升级跨了依赖线,先执行 `dsh plugin --profile web update @dsh-so/dsh-plugin-advisor` 再试。
 
 > In fact, **any** third-party DSH plugin that correctly declares peer dependencies triggers the same warning when installed into a profile (the harness's own `@deepseek-ai/dsh-tool-cordis` declares `@deepseek-ai/cordis` the same way). It is pnpm being "under-informed", not an error.
 
@@ -139,7 +139,7 @@ For daily use: **just ignore the warning**.
 
 ## 3. Usage
 
-`find_plugin` is an **agent tool** — no manual command; just tell the agent what you need and it calls the tool automatically. A few example prompts (Chinese works too):
+`plugin_advisor` is an **agent tool** — no manual command; just tell the agent what you need and it calls the tool automatically. A few example prompts (Chinese works too):
 
 - "Find me a plugin for OCR / screenshots"
 - "I need a terminal TUI plugin"
@@ -153,14 +153,14 @@ For daily use: **just ignore the warning**.
 **English — OCR / screenshots**
 
 - **You:** *Find me a plugin for OCR / screenshots*
-- **Agent:** *automatically calls `find_plugin` with `{"query": "vision OCR screenshots", "limit": 3}` and returns a ranked list — see [Output Format](#4-output-format)*
+- **Agent:** *automatically calls `plugin_advisor` with `{"query": "vision OCR screenshots", "limit": 3}` and returns a ranked list — see [Output Format](#4-output-format)*
 - **You:** *How do I install the top one?*
 - **Agent:** *Run `dsh plugin --profile web add dsh-vision-router`, then restart `dsh web`.*
 
 **中文 — 终端 TUI**
 
 - **你:** *有没有终端 TUI 插件?*
-- **助手:** *自动调用 `find_plugin`,query 为 `"terminal TUI"`* → 返回 `dsh-tianshu-tui`、`dsh-whale-tui`、`dsh-tui` 等结果
+- **助手:** *自动调用 `plugin_advisor`,query 为 `"terminal TUI"`* → 返回 `dsh-tianshu-tui`、`dsh-whale-tui`、`dsh-tui` 等结果
 - **你:** *帮我装第一个*
 - **助手:** *执行 `dsh plugin --profile web add dsh-tianshu-tui`,然后重启 `dsh web`。*
 
@@ -177,7 +177,7 @@ For daily use: **just ignore the warning**.
 
 Each result includes: rank, plugin name, stars, topics, **verification level (L1–L5)** and **security status/risk** badges, description, install command, detail link. Real examples below were captured from the live registry — ranks and star counts drift over time.
 
-**`find_plugin("vision OCR screenshots", limit=3)`**
+**`plugin_advisor("vision OCR screenshots", limit=3)`**
 
 ```
 1. dsh-vision-router — 46★ [developer, vision] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
@@ -197,7 +197,7 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
    https://www.dsh.so/plugins/dsh-vision-toolkit/
 ```
 
-**`find_plugin("terminal TUI", limit=3)`**
+**`plugin_advisor("terminal TUI", limit=3)`**
 
 ```
 1. dsh-tianshu-tui — 132★ [terminal, ui] · ✔ 基础验证通过 · 🔒 安全通过:低风险
@@ -216,7 +216,7 @@ Each result includes: rank, plugin name, stars, topics, **verification level (L1
    https://www.dsh.so/plugins/dsh-tui-4/
 ```
 
-**`find_plugin("memory rag", limit=3)`**
+**`plugin_advisor("memory rag", limit=3)`**
 
 ```
 1. dsh-memory — 2★ [terminal, knowledge, storage] · ✔ 基础验证通过 · ⚠️ 安全提示:中风险
@@ -264,7 +264,7 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 ```yaml
 - insert:
     - id: dsh-plugin-finder
-      name: dsh-plugins-finder
+      name: @dsh-so/dsh-plugin-advisor
       config:
         indexUrl: https://www.dsh.so/plugins-index.json   # override for self-host / testing
         maxResults: 5                                      # default result count
@@ -292,7 +292,7 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 
 ## 8. FAQ
 
-**Q: Installed, but no `find_plugin` tool in the session?**
+**Q: Installed, but no `plugin_advisor` tool in the session?**
 A: Check two things: ① `dsh plugin --profile web list` confirms it is installed; ② you must **restart** `dsh web` for a new bundle to load.
 
 **Q: Should I act on the `missing peer` warnings?**
@@ -302,22 +302,22 @@ A: No — they are a false positive; see [Section 2](#2-peer-dependency-warnings
 A: Use broader English terms such as `"image"`, `"terminal"`, `"memory"`, or drop overly specific qualifiers.
 
 **Q: How do I update the plugin?**
-A: `dsh plugin --profile web add dsh-plugins-finder@latest`, then restart.
+A: `dsh plugin --profile web add @dsh-so/dsh-plugin-advisor@latest`, then restart.
 
 **Q: How do I uninstall?**
-A: `dsh plugin --profile web remove dsh-plugins-finder`, then restart.
+A: `dsh plugin --profile web remove @dsh-so/dsh-plugin-advisor`, then restart.
 
 **Q: PowerShell error "The splatting operator '@' cannot be used..."?**
 A: That only happens with **scoped** packages (`@scope/name`) — PowerShell treats a leading `@` as the splat operator, so quote the name: `dsh plugin --profile web add '@scope/name'`. This plugin is **unscoped**, so no quotes are needed.
 
-**Q: Boot fails with `ERR_MODULE_NOT_FOUND: Cannot find package 'dsh-plugins-finder'`?**
-A: A stale install entry (or the bundle patch `name`) still references the old unscoped name. Remove by package name and reinstall: `dsh plugin --profile web remove dsh-plugins-finder`, then `add` again.
+**Q: Boot fails with `ERR_MODULE_NOT_FOUND: Cannot find package '@dsh-so/dsh-plugin-advisor'`?**
+A: A stale install entry (or the bundle patch `name`) still references the old unscoped name. Remove by package name and reinstall: `dsh plugin --profile web remove @dsh-so/dsh-plugin-advisor`, then `add` again.
 
 **Q: The npmjs.com page shows an older version than the registry?**
-A: The website caches; the registry is authoritative. Verify in a terminal: `npm view dsh-plugins-finder version --prefer-online`; hard-refresh the page (Ctrl+F5) or wait a few minutes.
+A: The website caches; the registry is authoritative. Verify in a terminal: `npm view @dsh-so/dsh-plugin-advisor version --prefer-online`; hard-refresh the page (Ctrl+F5) or wait a few minutes.
 
 **Q: How do I check which version is installed?**
-A: `dsh plugin --profile web list` shows the profile's dependency; `npm view dsh-plugins-finder version` shows the latest on npm.
+A: `dsh plugin --profile web list` shows the profile's dependency; `npm view @dsh-so/dsh-plugin-advisor version` shows the latest on npm.
 
 ---
 
@@ -341,7 +341,7 @@ npm run verify:install            # offline: npm registry + GitHub, functional s
 npm run verify:install -- --live  # also queries the real dsh.so index
 ```
 
-The script installs `dsh-plugins-finder@<version>` from npm and from `github:ihuajiu/dsh-plugins-finder` into throwaway dirs (mirroring a dsh profile's settings), asserts the installed bundle matches the expected name/version and ships `lib/index.js` + `lib/match.js`, then runs a functional smoke of the matching logic. It exits non-zero if either source breaks. `npm run verify` (test + verify:install) is the full gate.
+The script installs `@dsh-so/dsh-plugin-advisor@<version>` from npm and from `github:dsh-so/dsh-plugin-advisor` into throwaway dirs (mirroring a dsh profile's settings), asserts the installed bundle matches the expected name/version and ships `lib/index.js` + `lib/match.js`, then runs a functional smoke of the matching logic. It exits non-zero if either source breaks. `npm run verify` (test + verify:install) is the full gate.
 
 ---
 
