@@ -1,3 +1,7 @@
+import { createHash } from 'node:crypto'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import Schema from '@deepseek-ai/schemastery'
@@ -12,7 +16,7 @@ export interface Config {
   indexUrl: string
   /** Default result count when the model does not pass a limit. */
   maxResults: number
-  /** How long to reuse the fetched index before refetching. */
+  /** How long to reuse the fetched index before refetching (default 12h = at most 2 fetches/day). */
   cacheTtlMs: number
   /** Abort the fetch after this many milliseconds. */
   timeoutMs: number
@@ -27,7 +31,7 @@ export interface Config {
 export const Config: Schema<Config> = Schema.object({
   indexUrl: Schema.string().default('https://www.dsh.so/plugins-index.json'),
   maxResults: Schema.number().default(5),
-  cacheTtlMs: Schema.number().default(10 * 60 * 1000),
+  cacheTtlMs: Schema.number().default(12 * 60 * 60 * 1000).description('索引缓存有效期；默认 12 小时，即一天最多拉取 2 次。'),
   timeoutMs: Schema.number().default(15000),
   attribution: Schema.boolean().default(true),
   minVerificationLevel: Schema.number().default(5).description('结果默认需达到的最低验证等级（L1–L5），0 表示不过滤。'),
@@ -134,8 +138,42 @@ function installedCoverage(schemas: { name?: string; description?: string }[], q
 
 let cache: { at: number; entries: IndexEntry[] } | null = null
 
+/** Disk-backed cache so the fetch budget survives profile restarts. */
+function cacheFileFor(indexUrl: string): string {
+  const hash = createHash('sha256').update(indexUrl).digest('hex').slice(0, 16)
+  const dir = join(tmpdir(), 'dsh-plugin-advisor')
+  try {
+    mkdirSync(dir, { recursive: true })
+  } catch {}
+  return join(dir, `index-${hash}.json`)
+}
+
+function readDiskCache(indexUrl: string): { at: number; entries: IndexEntry[] } | null {
+  try {
+    const file = cacheFileFor(indexUrl)
+    if (!existsSync(file)) return null
+    const parsed = JSON.parse(readFileSync(file, 'utf8')) as { at: number; entries: IndexEntry[] }
+    if (!parsed || typeof parsed.at !== 'number' || !Array.isArray(parsed.entries)) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+function writeDiskCache(indexUrl: string, at: number, entries: IndexEntry[]): void {
+  try {
+    writeFileSync(cacheFileFor(indexUrl), JSON.stringify({ at, entries }))
+  } catch {}
+}
+
 async function loadIndex(config: Config, signal?: AbortSignal): Promise<IndexEntry[]> {
-  if (cache && Date.now() - cache.at < config.cacheTtlMs) return cache.entries
+  const now = Date.now()
+  if (cache && now - cache.at < config.cacheTtlMs) return cache.entries
+  const disk = readDiskCache(config.indexUrl)
+  if (disk && now - disk.at < config.cacheTtlMs) {
+    cache = disk
+    return disk.entries
+  }
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), config.timeoutMs)
   signal?.addEventListener('abort', () => ctrl.abort(), { once: true })
@@ -147,10 +185,13 @@ async function loadIndex(config: Config, signal?: AbortSignal): Promise<IndexEnt
     if (!res.ok) throw new Error('dsh.so index request failed: HTTP ' + res.status)
     const json = (await res.json()) as { plugins?: IndexEntry[] }
     const entries = json.plugins || []
-    cache = { at: Date.now(), entries }
+    cache = { at: now, entries }
+    writeDiskCache(config.indexUrl, now, entries)
     return entries
-  } finally {
-    clearTimeout(timer)
+  } catch (e) {
+    // Stale cache is far better than no cache when offline / rate-limited.
+    if (disk) return disk.entries
+    throw e
   }
 }
 

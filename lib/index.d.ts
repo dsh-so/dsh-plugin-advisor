@@ -7,7 +7,7 @@ export interface Config {
     indexUrl: string;
     /** Default result count when the model does not pass a limit. */
     maxResults: number;
-    /** How long to reuse the fetched index before refetching. */
+    /** How long to reuse the fetched index before refetching (default 12h = at most 2 fetches/day). */
     cacheTtlMs: number;
     /** Abort the fetch after this many milliseconds. */
     timeoutMs: number;
