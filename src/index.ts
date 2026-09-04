@@ -164,6 +164,19 @@ function runInstall(target: string, profile: string): { ok: boolean; log: string
   return { ok: r.status === 0, log: log || (r.error ? String(r.error) : `exit ${r.status}`) }
 }
 
+/** Run `dsh plugin --profile <profile> remove <pkg>` (package name only) and capture its output. */
+function runRemove(pkg: string, profile: string): { ok: boolean; log: string } {
+  const cmdline = `dsh plugin --profile ${profile} remove ${pkg}`
+  const r = spawnSync(cmdline, {
+    shell: true,
+    encoding: 'utf8',
+    windowsHide: true,
+    timeout: 5 * 60 * 1000,
+  })
+  const log = ((r.stdout || '') + (r.stderr || '')).trim()
+  return { ok: r.status === 0, log: log || (r.error ? String(r.error) : `exit ${r.status}`) }
+}
+
 let cache: { at: number; entries: IndexEntry[] } | null = null
 
 /** Disk-backed cache so the fetch budget survives profile restarts. */
@@ -256,6 +269,12 @@ export function apply(ctx: Context, config: Config) {
           type: 'string',
           description: 'dsh profile to install into (default "web").',
         },
+        remove: {
+          type: 'string',
+          description:
+            'Package name to uninstall now, e.g. "dsh-vision-router". ' +
+            'ONLY pass this after the user confirmed removal. 用于用后即焚：任务完成后按用户意愿移除临时安装的插件。',
+        },
       },
       output: {
         schema: {
@@ -346,6 +365,29 @@ export function apply(ctx: Context, config: Config) {
         },
       },
       async execute(args, exec) {
+        const removeRaw = String(args.remove ?? '').trim()
+        if (removeRaw) {
+          const pkg = sanitizeInstallTarget(removeRaw)
+          if (!pkg || pkg.startsWith('github:')) {
+            const out: Record<string, JsonValue> = {}
+            out.removed = false
+            out.error = `Rejected remove target "${removeRaw}" — pass an installed npm package name (as shown in dsh plugin list).`
+            return out
+          }
+          const profile = String(args.profile ?? 'web').replace(/[^a-z0-9_-]/gi, '') || 'web'
+          const { ok, log } = runRemove(pkg, profile)
+          const out: Record<string, JsonValue> = {}
+          out.removed = ok
+          out.target = pkg
+          out.profile = profile
+          out.log = log.slice(-4000)
+          out.note = ok
+            ? `Removed ${pkg} from profile "${profile}". It unloads on the next dsh web restart — remind the user to restart.`
+            : log.includes('ERR_PNPM_IGNORED_BUILDS')
+              ? 'pnpm exited non-zero because another dependency in this profile has unapproved build scripts (unrelated to this removal). Run `pnpm approve-builds` in the profile directory, then retry.'
+              : 'Remove failed — show the log to the user.'
+          return out
+        }
         const installRaw = String(args.install ?? '').trim()
         if (installRaw) {
           const target = sanitizeInstallTarget(installRaw)
@@ -362,7 +404,8 @@ export function apply(ctx: Context, config: Config) {
           out.profile = profile
           out.log = log.slice(-4000)
           out.note = ok
-            ? `Installed ${target} into profile "${profile}". It loads on the next dsh web restart — remind the user to restart.`
+            ? `Installed ${target} into profile "${profile}". It loads on the next dsh web restart — remind the user to restart. ` +
+              `用后即焚：当用户借助该插件完成任务后，主动提醒可以移除它（再次调用本工具传 remove 参数即可）；用户确认后执行移除。`
             : log.includes('ERR_PNPM_IGNORED_BUILDS')
               ? 'pnpm exited non-zero because another dependency in this profile has unapproved build scripts (unrelated to this install). Run `pnpm approve-builds` in the profile directory, then retry the install.'
               : 'Install failed — show the log to the user.'
