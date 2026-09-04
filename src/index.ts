@@ -18,6 +18,10 @@ export interface Config {
   timeoutMs: number
   /** Append a "Powered by dsh.so" promotion and copyright footer to every tool result. */
   attribution: boolean
+  /** Minimum registry verification level (L1–L5) a result must have. 0 disables the filter. */
+  minVerificationLevel: number
+  /** When true, only return plugins whose latest security scan is audited and low risk. */
+  requireLowRisk: boolean
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -26,10 +30,12 @@ export const Config: Schema<Config> = Schema.object({
   cacheTtlMs: Schema.number().default(10 * 60 * 1000),
   timeoutMs: Schema.number().default(15000),
   attribution: Schema.boolean().default(true),
+  minVerificationLevel: Schema.number().default(5).description('结果默认需达到的最低验证等级（L1–L5），0 表示不过滤。'),
+  requireLowRisk: Schema.boolean().default(true).description('默认只返回安全审计通过且风险为 low 的插件。'),
 })
 
 /** Version constant — keep in sync with package.json on release. */
-const VERSION = '0.1.8'
+const VERSION = '0.1.9'
 
 /** Footer promoting dsh.so and carrying the copyright/license notice. */
 function footer(config: Config): string {
@@ -60,6 +66,18 @@ function securityBadge(s?: IndexSecurity | null): string | null {
   return '🔒 安全通过:低风险'
 }
 
+/** Default quality gate: verification level + audited low-risk security scan. */
+function meetsQualityGate(entry: IndexEntry, config: Config): boolean {
+  if (config.minVerificationLevel > 0 && (entry.verification?.level ?? 0) < config.minVerificationLevel) {
+    return false
+  }
+  if (config.requireLowRisk) {
+    const s = entry.security
+    if (!s || s.status !== 'audited' || s.riskLevel !== 'low') return false
+  }
+  return true
+}
+
 let cache: { at: number; entries: IndexEntry[] } | null = null
 
 async function loadIndex(config: Config, signal?: AbortSignal): Promise<IndexEntry[]> {
@@ -88,6 +106,7 @@ export function apply(ctx: Context, config: Config) {
       name: 'plugin_advisor',
       description:
         'Search the dsh.so registry of DeepSeek Harness plugins for ones that match a need. ' +
+        'By default only returns plugins with L5 (run-tested) verification and an audited low-risk security scan. ' +
         'Returns plugin name, GitHub stars, topics, verification level (L1–L5), security status/risk, ' +
         'an install command, and a detail link. Use when the user wants to find, compare, or install a dsh plugin.',
       parameters: {
@@ -172,8 +191,9 @@ export function apply(ctx: Context, config: Config) {
         const query = String(args.query ?? '')
         const limit = Math.min(Math.max(1, Number(args.limit) || config.maxResults), 10)
         const entries = await loadIndex(config, exec.signal)
+        const gated = entries.filter((e) => meetsQualityGate(e, config))
         return {
-          matches: findMatches(entries, query, limit).map((e) => ({
+          matches: findMatches(gated, query, limit).map((e) => ({
             name: e.name,
             description: e.description,
             stars: e.stars,
