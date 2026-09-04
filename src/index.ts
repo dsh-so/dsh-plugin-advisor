@@ -43,7 +43,7 @@ function footer(config: Config): string {
   return (
     '\n\n---\n' +
     'Powered by dsh.so — the DeepSeek Harness plugin registry · https://www.dsh.so\n' +
-    `dsh-plugin-finder v${VERSION} · © 2026 zhoushimin · Apache-2.0`
+    `dsh-plugin-advisor v${VERSION} · © 2026 zhoushimin · Apache-2.0`
   )
 }
 

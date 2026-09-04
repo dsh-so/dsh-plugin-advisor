@@ -1,4 +1,4 @@
-# dsh-plugin-finder
+# dsh-plugin-advisor
 
 Find DeepSeek Harness plugins from the [dsh.so](https://dsh.so) registry — like *find-skill*, but for dsh plugins.
 
@@ -48,7 +48,7 @@ dsh plugin --profile headless add @dsh-so/dsh-plugin-advisor
 Install from a local checkout (development):
 
 ```sh
-dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
+dsh plugin --profile web add E:\AgentsWs\dsh-so-projects\dsh-plugins\dsh-plugin-advisor
 ```
 
 > ⚠️ **Version note**: if you have **0.1.0**, upgrade first — 0.1.0 installed `@deepseek-ai/dsh-tools` as a regular dependency, which conflicts with the host's copy and crashes the agent loop with `Cannot read properties of undefined (reading 'prepare')`. **Fixed in 0.1.1**; reinstall with:
@@ -164,6 +164,10 @@ For daily use: **just ignore the warning**.
 - **你:** *帮我装第一个*
 - **助手:** *执行 `dsh plugin --profile web add dsh-tianshu-tui`,然后重启 `dsh web`。*
 
+### Capability-gap auto search & install confirmation
+
+When your request cannot be handled by any **installed** tool, the agent automatically calls `plugin_advisor` with a description of the missing capability. Results pass a default quality gate — **L5 (run-tested) verification** and an **audited security scan** (warning-level findings are kept; high/critical risk is excluded). The tool then highlights the single best match, prints its install command, and **asks the user to confirm before installing** — nothing is installed without consent.
+
 ### Tool parameters
 
 | Parameter | Required | Type | Description |
@@ -243,13 +247,13 @@ No-match response:
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-finder v0.1.8 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
+Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-advisor v0.1.9 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
 
 ---
 
 ## 5. Search Tips
 
-- **Use English keywords**: matching tokenizes the query, so single English words (`ocr`, `rag`, `tui`) hit far better than long phrases.
+- **中文查询已优化 / Chinese queries work well**: a built-in zh→en concept lexicon (记忆→memory, 账单→billing…) plus CJK bigram matching; short English keywords still score best / 内置中英概念词典与 CJK 二元组匹配，英文短词仍最优。
 - **Be specific**: `"terminal TUI"` beats vague descriptions.
 - **Use topic tags**: e.g. `vision`, `browser`, `automation`, `ui` — topic hits weigh more.
 - **An empty query returns the top entries by stars** (the model rarely does this, but the behavior exists).
@@ -279,6 +283,8 @@ Configure in the host composition or an agent preset's `cordis.yml` (defaults ar
 | `cacheTtlMs` | `600000` (10 min) | How long to reuse the fetched index before refetching |
 | `timeoutMs` | `15000` | Fetch timeout in milliseconds |
 | `attribution` | `true` | Append a "Powered by dsh.so" promotion and copyright footer to every result |
+| `minVerificationLevel` | `5` | Minimum verification level (L1–L5) a result must have; `0` disables the filter / 结果最低验证等级，0 表示不过滤 |
+| `requireLowRisk` | `true` | Only audited plugins; warning-level findings are kept, high/critical risk excluded / 仅保留已审计插件，warning 可接受，排除 high/critical |
 
 ---
 

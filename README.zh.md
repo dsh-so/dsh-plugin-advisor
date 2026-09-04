@@ -1,4 +1,4 @@
-# dsh-plugin-finder
+# dsh-plugin-advisor
 
 在 dsh.so 插件市场中检索 DeepSeek Harness 插件——类似 *find-skill*,但面向 dsh 插件。
 
@@ -48,7 +48,7 @@ dsh plugin --profile headless add @dsh-so/dsh-plugin-advisor
 从本地源码目录安装(开发调试时):
 
 ```sh
-dsh plugin --profile web add E:\AgentsWs\PluginBuilder\dsh-plugin-finder
+dsh plugin --profile web add E:\AgentsWs\dsh-so-projects\dsh-plugins\dsh-plugin-advisor
 ```
 
 > ⚠️ **版本提示**:若你装的是 **0.1.0**,请先升级——0.1.0 把 `@deepseek-ai/dsh-tools` 装成了普通依赖,会与宿主副本冲突导致 agent 循环崩溃(`Cannot read properties of undefined (reading 'prepare')`)。**0.1.1 已修复**,重新安装:
@@ -163,6 +163,10 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 - **You:** *Install the first one*
 - **Agent:** *Run `dsh plugin --profile web add dsh-tianshu-tui`, then restart `dsh web`.*
 
+### 能力缺口自动搜索与安装确认
+
+当你的需求**已安装的插件都无法满足**时，agent 会自动调用 `plugin_advisor` 搜索缺失的能力。结果默认通过质量门槛——**L5（实测）验证等级** 且 **安全审计通过**（warning 级发现可接受，排除 high/critical 风险）。随后工具会高亮最匹配的一个插件、给出安装命令，并**先向用户确认再安装**——未经同意不会安装任何插件。
+
 ### 工具参数
 
 | 参数 | 必填 | 类型 | 说明 |
@@ -242,13 +246,13 @@ dsh plugin --profile web add @deepseek-ai/cordis@4.0.1 @deepseek-ai/dsh-tools@0.
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-finder v0.1.8 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
+每条结果(匹配或无匹配)末尾都会附带 **Powered by dsh.so** 推广信息和版权行(`dsh-plugin-advisor v0.1.9 · © 2026 zhoushimin · Apache-2.0`)。可通过 `attribution: false` 关闭。
 
 ---
 
 ## 5. 查询技巧
 
-- **用英文关键词**:工具内部按 token 分词匹配,英文单词(如 `ocr`、`rag`、`tui`)命中率远高于长句。
+- **中文查询已优化**：内置中英概念词典（记忆→memory、账单→billing 等）与 CJK 二元组匹配，中文长句也能准确命中；英文短词仍最优。
 - **把需求说具体**:`"terminal TUI"` 比 `"好看的界面"` 结果更准。
 - **可以用标签词**:如 `vision`、`browser`、`automation`、`ui`,标签命中权重更高。
 - **空 query 会按 star 数返回 Top N**(模型一般不会这么用,但行为如此)。
@@ -278,6 +282,8 @@ No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g
 | `cacheTtlMs` | `600000`(10 分钟) | 索引缓存时长,避免每次调用都重新抓取 |
 | `timeoutMs` | `15000` | 抓取索引的超时时间(毫秒) |
 | `attribution` | `true` | 在每次结果末尾追加 "Powered by dsh.so" 推广与版权信息 |
+| `minVerificationLevel` | `5` | Minimum verification level (L1–L5) a result must have; `0` disables the filter / 结果最低验证等级，0 表示不过滤 |
+| `requireLowRisk` | `true` | Only audited plugins; warning-level findings are kept, high/critical risk excluded / 仅保留已审计插件，warning 可接受，排除 high/critical |
 
 ---
 
