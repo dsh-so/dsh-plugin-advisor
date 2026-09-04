@@ -1,9 +1,11 @@
 import { createHash } from 'node:crypto'
+import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
+import type { JsonValue } from '@deepseek-ai/dsh-tools'
 import Schema from '@deepseek-ai/schemastery'
 import { findMatches } from './match.js'
 import type { IndexEntry, IndexVerification, IndexSecurity } from './match.js'
@@ -136,6 +138,32 @@ function installedCoverage(schemas: { name?: string; description?: string }[], q
   }
 }
 
+/**
+ * Validate an install target before it reaches the shell. Accepts npm package
+ * names (scoped or not, with optional @version) and github: owner/repo specs.
+ * Everything else — shell metacharacters, flags, URLs — is rejected.
+ */
+function sanitizeInstallTarget(raw: string): string | null {
+  const target = raw.trim()
+  if (!target || target.length > 200) return null
+  const npm = /^(@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*(@[a-z0-9-_.^~]*)?$/i
+  const git = /^github:[a-z0-9][a-z0-9-]*\/[a-z0-9._-]+$/i
+  return npm.test(target) || git.test(target) ? target : null
+}
+
+/** Run `dsh plugin --profile <profile> add <target>` and capture its output. */
+function runInstall(target: string, profile: string): { ok: boolean; log: string } {
+  const cmdline = `dsh plugin --profile ${profile} add ${target}`
+  const r = spawnSync(cmdline, {
+    shell: true,
+    encoding: 'utf8',
+    windowsHide: true,
+    timeout: 5 * 60 * 1000,
+  })
+  const log = ((r.stdout || '') + (r.stderr || '')).trim()
+  return { ok: r.status === 0, log: log || (r.error ? String(r.error) : `exit ${r.status}`) }
+}
+
 let cache: { at: number; entries: IndexEntry[] } | null = null
 
 /** Disk-backed cache so the fetch budget survives profile restarts. */
@@ -209,13 +237,24 @@ export function apply(ctx: Context, config: Config) {
       parameters: {
         query: {
           type: 'string',
-          required: true,
+
           description:
-            'What the user wants to do, e.g. "vision OCR screenshots", "terminal TUI", "memory rag", "price tracking".',
+            'What the user wants to do, e.g. "vision OCR screenshots", "terminal TUI", "memory rag", "price tracking". ' +
+            'Required when `install` is not passed.',
         },
         limit: {
           type: 'number',
           description: 'Maximum number of results (default: from plugin config).',
+        },
+        install: {
+          type: 'string',
+          description:
+            'Install target to install now, e.g. "dsh-vision-router", "@scope/pkg@1.2.0" or "github:owner/repo". ' +
+            'ONLY pass this after the user explicitly confirmed installation; run the search first, then ask.',
+        },
+        profile: {
+          type: 'string',
+          description: 'dsh profile to install into (default "web").',
         },
       },
       output: {
@@ -286,7 +325,7 @@ export function apply(ctx: Context, config: Config) {
           let prompt =
             `\n\n💡 推荐安装:「${top.name}」 — ${top.description}\n` +
             `   安装命令: ${top.install}\n` +
-            '   是否安装？请向用户确认后再执行安装。'
+            '   是否安装？用户确认后，再次调用本工具并传 install 参数即可自动安装（安装后提醒用户重启 dsh web 生效）。'
           if (value2.capabilityGap) {
             prompt =
               `\n\n🧭 当前已安装的工具看起来不具备该能力（能力缺口）。` +
@@ -297,7 +336,33 @@ export function apply(ctx: Context, config: Config) {
         },
       },
       async execute(args, exec) {
-        const query = String(args.query ?? '')
+        const installRaw = String(args.install ?? '').trim()
+        if (installRaw) {
+          const target = sanitizeInstallTarget(installRaw)
+          const out: Record<string, JsonValue> = {}
+          if (!target) {
+            out.installed = false
+            out.error = `Rejected install target "${installRaw}" — not a valid npm package name or github:owner/repo spec.`
+            return out
+          }
+          const profile = String(args.profile ?? 'web').replace(/[^a-z0-9_-]/gi, '') || 'web'
+          const { ok, log } = runInstall(target, profile)
+          out.installed = ok
+          out.target = target
+          out.profile = profile
+          out.log = log.slice(-4000)
+          out.note = ok
+            ? `Installed ${target} into profile "${profile}". It loads on the next dsh web restart — remind the user to restart.`
+            : log.includes('ERR_PNPM_IGNORED_BUILDS')
+              ? 'pnpm exited non-zero because another dependency in this profile has unapproved build scripts (unrelated to this install). Run `pnpm approve-builds` in the profile directory, then retry the install.'
+              : 'Install failed — show the log to the user.'
+          return out
+        }
+        const query = String(args.query ?? '').trim()
+        if (!query) {
+          const out: Record<string, JsonValue> = { matches: [], error: 'Pass either `query` (to search) or `install` (to install a confirmed target).' }
+          return out
+        }
         const limit = Math.min(Math.max(1, Number(args.limit) || config.maxResults), 10)
         const entries = await loadIndex(config, exec.signal)
         const gated = entries.filter((e) => meetsQualityGate(e, config))
