@@ -54,6 +54,42 @@ function footer(config: Config): string {
 }
 
 /** Plain-language verification badge (novice-friendly). */
+/** Build the user-facing recommendation card shared by render and presentResult. */
+function cardText(matches: IndexEntry[], gap?: boolean, covered?: string[]): string {
+  const top = matches[0]
+  const vb = verificationBadge(top.verification)
+  const sb = securityBadge(top.security)
+  const badges = [vb, sb].filter(Boolean).join(' · ')
+
+  const head = gap
+    ? '🧭 当前已安装的工具不具备这个能力，帮你找到了最匹配的插件：'
+    : '✅ 帮你找到了最匹配的插件：'
+  const coveredLine = gap && covered?.length
+    ? `（最接近的已有工具: ${covered.join('、')}，供参考）\n`
+    : ''
+
+  const card =
+    `${head}\n` +
+    coveredLine +
+    `\n🏆 推荐：「${top.name}」${top.stars ? ` · ${top.stars.toLocaleString('en-US')}★` : ''}${(top.topics || []).length ? ` · ${(top.topics || []).join('/')}` : ''}${badges ? `\n   ${badges}` : ''}\n` +
+    `   ${top.description}\n` +
+    `   详情: ${top.url}\n\n` +
+    `👉 直接回复「安装」即可自动装好（无需手动敲命令）；装完重启一次 dsh web 即可使用。`
+
+  const others = matches.slice(1)
+  const altBlock = others.length
+    ? '\n\n📋 备选（如对推荐不满意可换）：\n' +
+      others
+        .map((m, i) => {
+          const b2 = [verificationBadge(m.verification), securityBadge(m.security)].filter(Boolean).join(' · ')
+          return `${i + 2}. ${m.name}${m.stars ? ` — ${m.stars.toLocaleString('en-US')}★` : ''}${b2 ? ` · ${b2}` : ''}\n   ${m.description.slice(0, 120)}${m.description.length > 120 ? '…' : ''}\n   ${m.install}`
+        })
+        .join('\n')
+    : ''
+
+  return card + altBlock
+}
+
 function verificationBadge(v?: IndexVerification | null): string | null {
   if (!v?.level) return null
   return `🏅 ${v.label || `L${v.level}`}`
@@ -329,40 +365,27 @@ export function apply(ctx: Context, config: Config) {
               },
             ]
           }
-          const top = matches[0]
           const value2 = value as { capabilityGap?: boolean; alreadyCoveredBy?: string[] }
-          const vb = verificationBadge(top.verification)
-          const sb = securityBadge(top.security)
-          const badges = [vb, sb].filter(Boolean).join(' · ')
-
-          const head = value2.capabilityGap
-            ? '🧭 当前已安装的工具不具备这个能力，帮你找到了最匹配的插件：'
-            : '✅ 帮你找到了最匹配的插件：'
-          const covered = value2.capabilityGap && value2.alreadyCoveredBy?.length
-            ? `（最接近的已有工具: ${value2.alreadyCoveredBy.join('、')}，供参考）\n`
-            : ''
-
-          const card =
-            `${head}\n` +
-            covered +
-            `\n🏆 推荐：「${top.name}」${top.stars ? ` · ${top.stars.toLocaleString('en-US')}★` : ''}${(top.topics || []).length ? ` · ${(top.topics || []).join('/')}` : ''}${badges ? `\n   ${badges}` : ''}\n` +
-            `   ${top.description}\n` +
-            `   详情: ${top.url}\n\n` +
-            `👉 直接回复「安装」即可自动装好（无需手动敲命令）；装完重启一次 dsh web 即可使用。`
-
-          const others = matches.slice(1)
-          const altBlock = others.length
-            ? '\n\n📋 备选（如对推荐不满意可换）：\n' +
-              others
-                .map((m, i) => {
-                  const b2 = [verificationBadge(m.verification), securityBadge(m.security)].filter(Boolean).join(' · ')
-                  return `${i + 2}. ${m.name}${m.stars ? ` — ${m.stars.toLocaleString('en-US')}★` : ''}${b2 ? ` · ${b2}` : ''}\n   ${m.description.slice(0, 120)}${m.description.length > 120 ? '…' : ''}\n   ${m.install}`
-                })
-                .join('\n')
-            : ''
-
-          return [{ type: 'text', text: card + altBlock + footer(config) }]
+          return [{ type: 'text', text: cardText(matches, value2.capabilityGap, value2.alreadyCoveredBy) + footer(config) }]
         },
+      },
+      presentResult(args, result) {
+        const r = result as { matches?: IndexEntry[]; capabilityGap?: boolean; alreadyCoveredBy?: string[]; installed?: boolean; removed?: boolean; target?: string; error?: string; note?: string }
+        if (r.installed !== undefined || r.removed !== undefined) {
+          const action = r.installed !== undefined ? (r.installed ? '安装成功' : '安装失败') : r.removed ? '移除成功' : '移除失败'
+          return {
+            card: 'generic' as const,
+            title: `${r.installed !== undefined ? '📦' : '🧹'} ${action}${r.target ? ' · ' + r.target : ''}`,
+            content: [{ type: 'text' as const, text: String(r.note || r.error || '') }],
+          }
+        }
+        const matches = (r.matches || []) as IndexEntry[]
+        if (!matches.length) return undefined
+        return {
+          card: 'generic' as const,
+          title: `🔍 插件推荐 · ${matches[0].name}`,
+          content: [{ type: 'text' as const, text: cardText(matches, r.capabilityGap, r.alreadyCoveredBy) }],
+        }
       },
       async execute(args, exec) {
         const removeRaw = String(args.remove ?? '').trim()
