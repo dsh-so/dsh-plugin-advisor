@@ -78,6 +78,57 @@ function meetsQualityGate(entry: IndexEntry, config: Config): boolean {
   return true
 }
 
+const STOPWORDS = new Set([
+  'i', 'me', 'my', 'we', 'you', 'the', 'a', 'an', 'to', 'for', 'of', 'in', 'on', 'with', 'and', 'or',
+  'want', 'need', 'can', 'do', 'does', 'is', 'are', 'please', 'help', 'some', 'any', 'my', 'our',
+  '给', '我', '想', '要', '的', '了', '帮', '找', '一个', '这个', '那个', '可以', '需要', '希望', '请问',
+])
+
+/** Extract meaningful keywords from a natural-language capability request. */
+function keywordsOf(text: string): string[] {
+  const words = text
+    .toLowerCase()
+    .split(/[\s\p{P}]+/u)
+    .filter((w) => w.length >= 2 && !STOPWORDS.has(w))
+  // also split camelCase tool words like "OCR" or "tui" survive; CJK runs stay whole
+  return [...new Set(words)].slice(0, 24)
+}
+
+interface InstalledCoverage {
+  /** True when no installed tool seems to cover the requested capability. */
+  gap: boolean
+  /** Installed tools whose name/description matched some query keywords. */
+  coveredBy: string[]
+}
+
+/**
+ * Heuristic capability check: a request is "covered" only when installed tool
+ * names/descriptions mention enough of the query's keywords. Best-effort only —
+ * the model's own AUTO-TRIGGER judgment stays authoritative.
+ */
+function installedCoverage(schemas: { name?: string; description?: string }[], query: string): InstalledCoverage {
+  const kws = keywordsOf(query)
+  if (!kws.length) return { gap: true, coveredBy: [] }
+  const scored = schemas
+    .map((s) => {
+      const hay = `${s.name ?? ''} ${(s.description ?? '')}`.toLowerCase()
+      let hits = 0
+      for (const k of kws) {
+        if (hay.includes(k)) hits += 1
+        else if (k.length >= 3 && hay.split(/\s+/).some((w) => w.startsWith(k.slice(0, 3)))) hits += 0.5
+      }
+      return { name: s.name ?? '', score: hits / kws.length }
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+  const best = scored[0]?.score ?? 0
+  return {
+    gap: best < 0.34,
+    coveredBy: scored.filter((x) => x.score >= 0.34).map((x) => x.name),
+  }
+}
+
 let cache: { at: number; entries: IndexEntry[] } | null = null
 
 async function loadIndex(config: Config, signal?: AbortSignal): Promise<IndexEntry[]> {
@@ -106,6 +157,8 @@ export function apply(ctx: Context, config: Config) {
       name: 'plugin_advisor',
       description:
         'Search the dsh.so registry of DeepSeek Harness plugins for ones that match a need. ' +
+        'AUTO-TRIGGER: whenever the user asks to do something that none of your currently available tools can do, ' +
+        'call this tool with a short description of the needed capability before telling the user it is not possible. ' +
         'By default only returns plugins with L5 (run-tested) verification and an audited low-risk security scan. ' +
         'Returns plugin name, GitHub stars, topics, verification level (L1–L5), security status/risk, ' +
         'an install command, and a detail link. Use when the user wants to find, compare, or install a dsh plugin.',
@@ -184,7 +237,19 @@ export function apply(ctx: Context, config: Config) {
               (badges.length ? ' · ' + badges.join(' · ') : '')
             return `${head}\n   ${m.description}\n   Install: ${m.install}\n   ${m.url}`
           })
-          return [{ type: 'text', text: lines.join('\n\n') + footer(config) }]
+          const top = matches[0]
+          const value2 = value as { capabilityGap?: boolean; alreadyCoveredBy?: string[] }
+          let prompt =
+            `\n\n💡 推荐安装:「${top.name}」 — ${top.description}\n` +
+            `   安装命令: ${top.install}\n` +
+            '   是否安装？请向用户确认后再执行安装。'
+          if (value2.capabilityGap) {
+            prompt =
+              `\n\n🧭 当前已安装的工具看起来不具备该能力（能力缺口）。` +
+              (value2.alreadyCoveredBy?.length ? `最接近的已有工具: ${value2.alreadyCoveredBy.join(', ')}(供参考)。` : '') +
+              prompt
+          }
+          return [{ type: 'text', text: lines.join('\n\n') + prompt + footer(config) }]
         },
       },
       async execute(args, exec) {
@@ -192,7 +257,10 @@ export function apply(ctx: Context, config: Config) {
         const limit = Math.min(Math.max(1, Number(args.limit) || config.maxResults), 10)
         const entries = await loadIndex(config, exec.signal)
         const gated = entries.filter((e) => meetsQualityGate(e, config))
+        const coverage = installedCoverage(ctx.tools.schemas() as { name?: string; description?: string }[], query)
         return {
+          capabilityGap: coverage.gap,
+          ...(coverage.coveredBy.length ? { alreadyCoveredBy: coverage.coveredBy } : {}),
           matches: findMatches(gated, query, limit).map((e) => ({
             name: e.name,
             description: e.description,

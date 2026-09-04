@@ -36,6 +36,8 @@ export type IndexEntry = {
     security?: IndexSecurity;
 };
 export declare function tokenize(query: string): string[];
+/** Expand tokens: CJK runs yield zh→en concept words plus CJK bigrams. */
+export declare function expandTokens(tokens: string[]): string[];
 export declare function score(entry: IndexEntry, tokens: string[]): number;
 /** Rank registry entries against a free-text query; empty query returns top by stars. */
 export declare function findMatches(entries: IndexEntry[], query: string, limit: number): IndexEntry[];
