@@ -20,7 +20,7 @@ export interface Config {
   attribution: boolean
   /** Minimum registry verification level (L1–L5) a result must have. 0 disables the filter. */
   minVerificationLevel: number
-  /** When true, only return plugins whose latest security scan is audited and low risk. */
+  /** When true, only return audited plugins; warning-level findings are allowed, high/critical risk is not. */
   requireLowRisk: boolean
 }
 
@@ -31,7 +31,7 @@ export const Config: Schema<Config> = Schema.object({
   timeoutMs: Schema.number().default(15000),
   attribution: Schema.boolean().default(true),
   minVerificationLevel: Schema.number().default(5).description('结果默认需达到的最低验证等级（L1–L5），0 表示不过滤。'),
-  requireLowRisk: Schema.boolean().default(true).description('默认只返回安全审计通过且风险为 low 的插件。'),
+  requireLowRisk: Schema.boolean().default(true).description('默认只返回安全审计通过（audited）的插件；warning 级发现可接受，仅排除 high/critical 风险。'),
 })
 
 /** Version constant — keep in sync with package.json on release. */
@@ -73,7 +73,10 @@ function meetsQualityGate(entry: IndexEntry, config: Config): boolean {
   }
   if (config.requireLowRisk) {
     const s = entry.security
-    if (!s || s.status !== 'audited' || s.riskLevel !== 'low') return false
+    // audited with low/medium risk passes; warning-level findings are fine.
+    // Only high/critical risk and un-audited entries are excluded.
+    if (!s || s.status !== 'audited') return false
+    if (s.riskLevel !== 'low' && s.riskLevel !== 'medium') return false
   }
   return true
 }
@@ -159,7 +162,7 @@ export function apply(ctx: Context, config: Config) {
         'Search the dsh.so registry of DeepSeek Harness plugins for ones that match a need. ' +
         'AUTO-TRIGGER: whenever the user asks to do something that none of your currently available tools can do, ' +
         'call this tool with a short description of the needed capability before telling the user it is not possible. ' +
-        'By default only returns plugins with L5 (run-tested) verification and an audited low-risk security scan. ' +
+        'By default only returns plugins with L5 (run-tested) verification and an audited security scan (warning-level findings are acceptable; high/critical risk is excluded). ' +
         'Returns plugin name, GitHub stars, topics, verification level (L1–L5), security status/risk, ' +
         'an install command, and a detail link. Use when the user wants to find, compare, or install a dsh plugin.',
       parameters: {

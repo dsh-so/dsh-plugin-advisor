@@ -15,7 +15,7 @@ export interface Config {
     attribution: boolean;
     /** Minimum registry verification level (L1–L5) a result must have. 0 disables the filter. */
     minVerificationLevel: number;
-    /** When true, only return plugins whose latest security scan is audited and low risk. */
+    /** When true, only return audited plugins; warning-level findings are allowed, high/critical risk is not. */
     requireLowRisk: boolean;
 }
 export declare const Config: Schema<Config>;
