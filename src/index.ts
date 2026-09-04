@@ -56,7 +56,7 @@ function footer(config: Config): string {
 /** Plain-language verification badge (novice-friendly). */
 function verificationBadge(v?: IndexVerification | null): string | null {
   if (!v?.level) return null
-  return v.level >= 2 ? '✔ 基础验证通过' : '✔ 已收录(未功能测试)'
+  return `🏅 ${v.label || `L${v.level}`}`
 }
 
 /** Plain-language security badge (novice-friendly). */
@@ -304,35 +304,45 @@ export function apply(ctx: Context, config: Config) {
               {
                 type: 'text',
                 text:
-                  'No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").' +
+                  '没有找到完全匹配的 dsh.so 插件。已自动用更宽泛的关键词再试一次也没有结果。\n' +
+                  '可以直接告诉用户：该需求暂时没有现成插件，可关注 dsh.so 的更新，或描述更具体的需求换个说法再试。' +
                   footer(config),
               },
             ]
           }
-          const lines = matches.map((m, i) => {
-            const badges: string[] = []
-            const vb = verificationBadge(m.verification)
-            const sb = securityBadge(m.security)
-            if (vb) badges.push(vb)
-            if (sb) badges.push(sb)
-            const head =
-              `${i + 1}. ${m.name} — ${m.stars.toLocaleString('en-US')}★ [${(m.topics || []).join(', ')}]` +
-              (badges.length ? ' · ' + badges.join(' · ') : '')
-            return `${head}\n   ${m.description}\n   Install: ${m.install}\n   ${m.url}`
-          })
           const top = matches[0]
           const value2 = value as { capabilityGap?: boolean; alreadyCoveredBy?: string[] }
-          let prompt =
-            `\n\n💡 推荐安装:「${top.name}」 — ${top.description}\n` +
-            `   安装命令: ${top.install}\n` +
-            '   是否安装？用户确认后，再次调用本工具并传 install 参数即可自动安装（安装后提醒用户重启 dsh web 生效）。'
-          if (value2.capabilityGap) {
-            prompt =
-              `\n\n🧭 当前已安装的工具看起来不具备该能力（能力缺口）。` +
-              (value2.alreadyCoveredBy?.length ? `最接近的已有工具: ${value2.alreadyCoveredBy.join(', ')}(供参考)。` : '') +
-              prompt
-          }
-          return [{ type: 'text', text: lines.join('\n\n') + prompt + footer(config) }]
+          const vb = verificationBadge(top.verification)
+          const sb = securityBadge(top.security)
+          const badges = [vb, sb].filter(Boolean).join(' · ')
+
+          const head = value2.capabilityGap
+            ? '🧭 当前已安装的工具不具备这个能力，帮你找到了最匹配的插件：'
+            : '✅ 帮你找到了最匹配的插件：'
+          const covered = value2.capabilityGap && value2.alreadyCoveredBy?.length
+            ? `（最接近的已有工具: ${value2.alreadyCoveredBy.join('、')}，供参考）\n`
+            : ''
+
+          const card =
+            `${head}\n` +
+            covered +
+            `\n🏆 推荐：「${top.name}」${top.stars ? ` · ${top.stars.toLocaleString('en-US')}★` : ''}${(top.topics || []).length ? ` · ${(top.topics || []).join('/')}` : ''}${badges ? `\n   ${badges}` : ''}\n` +
+            `   ${top.description}\n` +
+            `   详情: ${top.url}\n\n` +
+            `👉 直接回复「安装」即可自动装好（无需手动敲命令）；装完重启一次 dsh web 即可使用。`
+
+          const others = matches.slice(1)
+          const altBlock = others.length
+            ? '\n\n📋 备选（如对推荐不满意可换）：\n' +
+              others
+                .map((m, i) => {
+                  const b2 = [verificationBadge(m.verification), securityBadge(m.security)].filter(Boolean).join(' · ')
+                  return `${i + 2}. ${m.name}${m.stars ? ` — ${m.stars.toLocaleString('en-US')}★` : ''}${b2 ? ` · ${b2}` : ''}\n   ${m.description.slice(0, 120)}${m.description.length > 120 ? '…' : ''}\n   ${m.install}`
+                })
+                .join('\n')
+            : ''
+
+          return [{ type: 'text', text: card + altBlock + footer(config) }]
         },
       },
       async execute(args, exec) {
