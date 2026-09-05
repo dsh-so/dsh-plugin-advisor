@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>DSH Web 重启中…</title>
+<style>body{font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#0f172a;color:#e2e8f0}
+.card{text-align:center;padding:40px 60px;border-radius:16px;background:#1e293b;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+h1{font-size:20px;font-weight:600}#num{font-size:72px;font-weight:700;color:#38bdf8}#status{color:#94a3b8;margin-top:12px}</style></head>
+<body><div class="card"><h1>dsh web 正在重启，倒计时后自动刷新</h1><div id="num">--</div><div id="status">正在检测服务 http://127.0.0.1:3080 …</div></div>
+<script>
+const url='http://127.0.0.1:3080';let n=0,ready=false;
+async function ping(){try{const r=await fetch(url,{cache:'no-store'});if(r.ok||r.status<500)return true}catch(e){}return false}
+async function tick(){
+ if(ready)return;
+ if(await ping()){ready=true;document.getElementById('num').textContent='✓';document.getElementById('num').style.color='#4ade80';document.getElementById('status').textContent='服务已就绪！2 秒后跳转…';setTimeout(()=>location.href=url,2000);return}
+ n++;document.getElementById('num').textContent=n;document.getElementById('status').textContent='服务尚未就绪，继续等待…（超过 90 秒请手动刷新）';setTimeout(tick,1000);
+}
+tick();
+</script></body></html>
