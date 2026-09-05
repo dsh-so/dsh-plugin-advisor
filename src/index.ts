@@ -62,29 +62,34 @@ function cardText(matches: IndexEntry[], gap?: boolean, covered?: string[]): str
   const badges = [vb, sb].filter(Boolean).join(' · ')
 
   const head = gap
-    ? '🧭 当前已安装的工具不具备这个能力，帮你找到了最匹配的插件：'
-    : '✅ 帮你找到了最匹配的插件：'
+    ? '🧭 当前工具做不到，帮你找到了最匹配的插件'
+    : '✅ 帮你找到了最匹配的插件'
   const coveredLine = gap && covered?.length
-    ? `（最接近的已有工具: ${covered.join('、')}，供参考）\n`
+    ? `（已有近似工具: ${covered.join('、')}）\n`
     : ''
+  const desc = top.description.length > 90 ? top.description.slice(0, 90) + '…' : top.description
+  const topicsLine = (top.topics || []).length ? (top.topics || []).map((t) => '`' + t + '`').join(' ') + '\n' : ''
 
   const card =
     `${head}\n` +
     coveredLine +
-    `\n🏆 推荐：「${top.name}」${top.stars ? ` · ${top.stars.toLocaleString('en-US')}★` : ''}${(top.topics || []).length ? ` · ${(top.topics || []).join('/')}` : ''}${badges ? `\n   ${badges}` : ''}\n` +
-    `   ${top.description}\n` +
-    `   详情: ${top.url}\n\n` +
-    `👉 直接回复「安装」即可自动装好（无需手动敲命令）；装完重启一次 dsh web 即可使用。`
+    `\n🏆 **${top.name}**${top.stars ? `  ${top.stars.toLocaleString('en-US')}★` : ''}\n` +
+    topicsLine +
+    `${badges ? `${badges}\n` : ''}` +
+    `${desc}\n` +
+    `🔗 ${top.url}\n` +
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+    `👉 回复「**安装**」即可自动装好，重启一次 dsh web 生效`
 
   const others = matches.slice(1)
   const altBlock = others.length
-    ? '\n\n📋 备选（如对推荐不满意可换）：\n' +
+    ? '\n\n**备选**：' +
       others
         .map((m, i) => {
-          const b2 = [verificationBadge(m.verification), securityBadge(m.security)].filter(Boolean).join(' · ')
-          return `${i + 2}. ${m.name}${m.stars ? ` — ${m.stars.toLocaleString('en-US')}★` : ''}${b2 ? ` · ${b2}` : ''}\n   ${m.description.slice(0, 120)}${m.description.length > 120 ? '…' : ''}\n   ${m.install}`
+          const d = m.description.length > 46 ? m.description.slice(0, 46) + '…' : m.description
+          return `\n${i + 2}. **${m.name}**${m.stars ? ` (${m.stars.toLocaleString('en-US')}★)` : ''} — ${d}`
         })
-        .join('\n')
+        .join('')
     : ''
 
   return card + altBlock
