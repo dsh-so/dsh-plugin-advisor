@@ -247,7 +247,7 @@ No-match response:
 No plugins in the dsh.so registry matched that query. Suggest broader terms (e.g. "image", "terminal", "memory").
 ```
 
-Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-advisor v0.2.0 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
+Every result (matches or no-match) ends with a **Powered by dsh.so** footer plus a copyright/license line (`dsh-plugin-advisor v0.2.1 · © 2026 zhoushimin · Apache-2.0`). Disable with `attribution: false`.
 
 ---
 

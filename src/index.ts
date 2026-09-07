@@ -41,7 +41,7 @@ export const Config: Schema<Config> = Schema.object({
 })
 
 /** Version constant — keep in sync with package.json on release. */
-const VERSION = '0.2.0'
+const VERSION = '0.2.1'
 
 /** Footer promoting dsh.so and carrying the copyright/license notice. */
 function footer(config: Config): string {
@@ -192,11 +192,21 @@ function sanitizeInstallTarget(raw: string): string | null {
   return npm.test(target) || git.test(target) ? target : null
 }
 
-/** Run `dsh plugin --profile <profile> add <target>` and capture its output. */
-function runInstall(target: string, profile: string): { ok: boolean; log: string } {
-  const cmdline = `dsh plugin --profile ${profile} add ${target}`
-  const r = spawnSync(cmdline, {
-    shell: true,
+/**
+ * Run the `dsh` CLI with argv-style arguments and capture its output.
+ * No user-controlled value is ever interpolated into a shell command string:
+ * install/remove targets and profiles are pre-validated by sanitizeInstallTarget
+ * (npm package names or github:owner/repo only) and passed as separate argv
+ * tokens. Node cannot spawn .cmd/.bat directly on Windows, so on win32 the CLI
+ * is launched through cmd.exe (/d /s /c) with the same argv array — shell:true
+ * is intentionally avoided.
+ */
+function runCli(args: string[]): { ok: boolean; log: string } {
+  const isWin = process.platform === 'win32'
+  const file = isWin ? (process.env.ComSpec || 'cmd.exe') : 'dsh'
+  const argv = isWin ? ['/d', '/s', '/c', 'dsh', ...args] : args
+  const r = spawnSync(file, argv, {
+    shell: false,
     encoding: 'utf8',
     windowsHide: true,
     timeout: 5 * 60 * 1000,
@@ -205,17 +215,14 @@ function runInstall(target: string, profile: string): { ok: boolean; log: string
   return { ok: r.status === 0, log: log || (r.error ? String(r.error) : `exit ${r.status}`) }
 }
 
+/** Run `dsh plugin --profile <profile> add <target>` and capture its output. */
+function runInstall(target: string, profile: string): { ok: boolean; log: string } {
+  return runCli(['plugin', '--profile', profile, 'add', target])
+}
+
 /** Run `dsh plugin --profile <profile> remove <pkg>` (package name only) and capture its output. */
 function runRemove(pkg: string, profile: string): { ok: boolean; log: string } {
-  const cmdline = `dsh plugin --profile ${profile} remove ${pkg}`
-  const r = spawnSync(cmdline, {
-    shell: true,
-    encoding: 'utf8',
-    windowsHide: true,
-    timeout: 5 * 60 * 1000,
-  })
-  const log = ((r.stdout || '') + (r.stderr || '')).trim()
-  return { ok: r.status === 0, log: log || (r.error ? String(r.error) : `exit ${r.status}`) }
+  return runCli(['plugin', '--profile', profile, 'remove', pkg])
 }
 
 let cache: { at: number; entries: IndexEntry[] } | null = null
