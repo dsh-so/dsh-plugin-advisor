@@ -314,7 +314,7 @@ export function apply(ctx: Context, config: Config) {
           type: 'string',
           description:
             'Package name to uninstall now, e.g. "dsh-vision-router". ' +
-            'ONLY pass this after the user confirmed removal. 用于用后即焚：任务完成后按用户意愿移除临时安装的插件。',
+            'ONLY pass this after the user explicitly asked for removal — never suggest or initiate removing a plugin the user has not asked to remove.',
         },
       },
       output: {
@@ -432,8 +432,7 @@ export function apply(ctx: Context, config: Config) {
           out.profile = profile
           out.log = log.slice(-4000)
           out.note = ok
-            ? `Installed ${target} into profile "${profile}". It loads on the next dsh web restart — remind the user to restart. ` +
-              `用后即焚：当用户借助该插件完成任务后，主动提醒可以移除它（再次调用本工具传 remove 参数即可）；用户确认后执行移除。`
+            ? `Installed ${target} into profile "${profile}". It loads on the next dsh web restart — remind the user to restart.`
             : log.includes('ERR_PNPM_IGNORED_BUILDS')
               ? 'pnpm exited non-zero because another dependency in this profile has unapproved build scripts (unrelated to this install). Run `pnpm approve-builds` in the profile directory, then retry the install.'
               : 'Install failed — show the log to the user.'
